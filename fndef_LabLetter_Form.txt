@@ -1,0 +1,40 @@
+// CPOE Template Library for CLINICFOLDERNAME
+
+/////////////////////////////////////////////////////////////
+
+////////////  STOP! THIS TEMPLATE FOR LAB LETTER FORM ONLY!!
+
+/////////////////////////////////////////////////////////////
+
+// **global variables contain text for lab letters
+// **functions are specific to "Lab Letter Generator" form
+
+
+//////  <<---------------------->>  GLOBALS  <<---------------------->>  //////  
+
+{!global gLLnormVarList = array("Generic Normal Lab^The labs that were done on your last visit all returned with normal results","Normal FIT^Text for normal FIT test.","Generic Abnormal Lab^Text for abnormal labs","+STD^Lab results returned positive for chlamydia/gonorrhea/trichomonas, a type of STD","Your Vitamin D levels were outside of the normal range","Your recent 1hr Glucola returned with glucose levels outside the normal range. ")}
+
+
+
+
+
+
+
+
+//////  <<---------------------->>  FUNCTIONS  <<---------------------->>  //////  
+
+/**  ***<< REMOVE WHEN ALL FUNCTIONS ARE MOVED HERE***
+
+fn checkAgainstList(_listVar,_input,_output){
+local lreturn = ""
+for l=1,l<=size(_listVar),l=l+1 do
+	local gl=get(_listVar,l)
+	if match(gl,_input) then lreturn=str(_output) else "" endif
+endfor
+return lreturn
+}
+
+
+
+
+**/

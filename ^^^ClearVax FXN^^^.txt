@@ -1,0 +1,662 @@
+********************************************VAX CLEAR QT*********************************************
+<<>> Clear vaccines (see qt template) and open order panel <<>>
+	>> use usercheck << ref .smoke for help on format
+		>> then use if match(usercheck …
+
+<<>> add local variables that check whether a vaccine has been added in that visit
+
+	local cflu = if obsnow(“FLU VAX”)<>”” then “Flu” else “” endif
+	global vaxCheck = array(cFlu, cHepb, cHepa,….etc) 
+	local cVax = “”
+                 for i=1, i<size(vaxCheck), i=i+1 do
+                 	if vaxCheck[i]<>”” then cVax = str(cVax, “^”,vaxCheck[i]) else “” endif
+                 endfor
+                 usercheck(”Clear vaccine entries from today for: “, str(cVax))
+
+ <<>> Use components of cVax as indicators to clear rest of obs for that vaccine <<>>
+
+	global hepb = array(“HEPB #1”,”HEPB BY”,”HEPB DSE”, etc)
+	// >> do array like this for all vaccines
+	global vaxArray = array(hepb,hepa,etc) 
+		for i=1,i<size(vaxArray),i=i+1 do 
+			for i=1,i<size(hepb),i=i+1 do
+                                 obsany(str(hepb[i]),””,str(._todaysdate))
+			endfor
+		endfor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***^^^REPLACE WITH "USERCHECK" (see .smoke for reference)^^^***
+++++++++++++++
+Smoking status: {Local SMOK
+SMOK=usercheck("Patient smoking status?","Current every day smoker^Current some day smoker^Former smoker^Never Smoker","","")
+OBSNOW("SMOK STATUS",SMOK)}
+Smoking cessation counseling provided? {IF USERYESNO('Smoking cessation counseling provided?') = 'Yes' THEN OBSNOW("SMOK ADVICE","yes") ELSE "" endif}
+
+++++++++++++++
+
+fn clearvax()
+{Local Clear
+Clear=usercheck("Clear today's vaccine entries for:","PCV13^Flu^DPT^HepB^HIB^Polio (OPV/IPV)^PneuPed^MMR^Rotavirus^Varicella^TDaP^Meningiococcal^HepA","","")
+
+local count=""
+if match(Clear, "PCV13")
+then count = (count + "PCV13;")
+else count = count
+endif
+if match(Clear, "Flu")
+then count = (count + "Flu;")
+else count = count
+endif
+if match(Clear, "DPT")
+then count = (count + "DPT;")
+else count = count
+endif
+if match(Clear, "HepB")
+then count = (count + "HepB;")
+else count = count
+endif
+if match(Clear, "HIB")
+then count = (count + "HIB;")
+else count = count
+endif
+if match(Clear, "Polio (OPV/IPV)")
+then count = (count + "Polio (OPV/IPV);")
+else count = count
+endif
+if match(Clear, "PneuPed")
+then count = (count + "PneuPed;")
+else count = count
+endif
+if match(Clear, "MMR")
+then count = (count + "MMR;")
+else count = count
+endif
+if match(Clear, "Rotavirus")
+then count = (count + "Rotavirus;")
+else count = count
+endif
+if match(Clear, "Varicella")
+then count = (count + "Varicella;")
+else count = count
+endif
+if match(Clear, "TDaP")
+then count = (count + "TDaP;")
+else count = count
+endif
+if match(Clear, "Meningiococcal")
+then count = (count + "Meningiococcal;")
+else count = count
+endif
+if match(Clear, "HepA")
+then count = (count + "HepA")
+else count = count
+endif
+
+if count<>"" then "Cleared from flowsheet: " + obsnow("SMOK STATUS",count) + UPDATE_ORDERS() endif
+}
+
+local count=0
+if match(Clear, "PCV13")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "Flu")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "DPT")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "HepB")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "HIB")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "Polio (OPV/IPV)")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "PneuPed")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "MMR")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "Rotavirus")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "Varicella")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "TDaP")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "Meningiococcal")
+then count = (count + 1)
+else count = count
+endif
+if match(Clear, "HepA")
+then count = (count + 1)
+else count = count
+endif
+
+if count>0 then return(count) + UPDATE_ORDERS() endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+++++++++++++++++++++++++++++++
+
+/**DPT**/
+IF match(Clear, "")DPT from flowsheet?" +\r\n + \r\n\ + "(e.g if DPT entered in error or not given)") == "Yes"
+THEN clearDPT() + count = (count + 1)
+ELSE ""
+ENDIF
+
+/**HepB**/
+IF match(Clear, "")
+THEN clearDPT() + count = (count + 1)
+ELSE ""
+ENDIF
+
+/**HIB**/
+IF match(Clear, "")DPT from flowsheet?" +\r\n + \r\n\ + "(e.g if DPT entered in error or not given)") == "Yes"
+THEN clearDPT() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Polio**/
+IF match(Clear, "")DPT from flowsheet?" +\r\n + \r\n\ + "(e.g if DPT entered in error or not given)") == "Yes"
+THEN clearDPT() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**PneuPed**/
+IF match(Clear, "")DPT from flowsheet?" +\r\n + \r\n\ + "(e.g if DPT entered in error or not given)") == "Yes"
+THEN clearDPT() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**MMR**/
+IF match(Clear, "")MMR from flowsheet?" +\r\n + \r\n\ + "(e.g if MMR entered in error or not given)") == "Yes"
+THEN clearMMR() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Rota**/
+IF match(Clear, "")Rota from flowsheet?" +\r\n + \r\n\ + "(e.g if Rota entered in error or not given)") == "Yes"
+THEN clearRota() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Varicella**/
+IF match(Clear, "")Varicella from flowsheet?" +\r\n + \r\n\ + "(e.g if Varicella entered in error or not given)") == "Yes"
+THEN clearVaricella() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**TDaP**/
+IF match(Clear, "")TDaP from flowsheet?" +\r\n + \r\n\ + "(e.g if TDaP entered in error or not given)") == "Yes"
+THEN clearTDaP() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Flu**/
+IF match(Clear, "")Flu from flowsheet?" +\r\n + \r\n\ + "(e.g if Flu entered in error or not given)") == "Yes"
+THEN clearFlu() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Pneumo**/
+IF match(Clear, "")Pneumo from flowsheet?" +\r\n + \r\n\ + "(e.g if Pneumo entered in error or not given)") == "Yes"
+THEN clearPneumo() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**Mening**/
+IF match(Clear, "")Meningiococcal from flowsheet?" +\r\n + \r\n\ + "(e.g if Meningiococcal entered in error or not given)") == "Yes"
+THEN clearMening() + count = (count + 1)
+ELSE ""
+ENDIF
++
+/**HepA**/
+IF match(Clear, "")HepA from flowsheet?" +\r\n + \r\n\ + "(e.g if HepA entered in error or not given)") == "Yes"
+THEN clearHepA() + count = (count + 1)
+ELSE ""
+ENDIF
++ 
+IF count >= 1
+THEN UPDATE_ORDERS()
+ENDIF
+}
+
+
+
+
+
+
+
+fn clearDPT(){
+   COND
+	CASE OBSNOW("DPT #1")<>""
+	     OBSNOW("DPT#1", "")"" +
+	     OBSNOW("DPT#1BY", "")"" +
+	     OBSNOW("DPT#1DOSE", "")"" +
+	     OBSNOW("DPT#1EXP", "")"" +
+	     OBSNOW("DPT#1LOT", "")"" +
+	     OBSNOW("DPT#1MFR", "")"" +
+	     OBSNOW("DPT#1RTE", "")"" +
+	     OBSNOW("DPT#1SITE", "")"" +
+	     OBSNOW("DPT#1VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("DPT #2")<>""
+	     OBSNOW("DPT #2", "")"" +
+	     OBSNOW("DPT #2BY", "")"" +
+	     OBSNOW("DPT #2DOSE", "")"" +
+	     OBSNOW("DPT #2EXP", "")"" +
+	     OBSNOW("DPT #2LOT", "")"" +
+	     OBSNOW("DPT #2MFR", "")"" +
+	     OBSNOW("DPT #2RTE", "")"" +
+	     OBSNOW("DPT #2SITE", "")"" +
+	     OBSNOW("DPT #2VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("DPT #3")<>""
+	     OBSNOW("DPT #3", "")"" +
+	     OBSNOW("DPT #3BY", "")"" +
+	     OBSNOW("DPT #3DOSE", "")"" +
+	     OBSNOW("DPT #3EXP", "")"" +
+	     OBSNOW("DPT #3LOT", "")"" +
+	     OBSNOW("DPT #3MFR", "")"" +
+	     OBSNOW("DPT #3RTE", "")"" +
+	     OBSNOW("DPT #3SITE", "")"" +
+	     OBSNOW("DPT #3VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("DPT #4")<>""
+	     OBSNOW("DPT #4", "")"" +
+	     OBSNOW("DPT #4BY", "")"" +
+	     OBSNOW("DPT #4DOSE", "")"" +
+	     OBSNOW("DPT #4EXP", "")"" +
+	     OBSNOW("DPT #4LOT", "")"" +
+	     OBSNOW("DPT #4MFR", "")"" +
+	     OBSNOW("DPT #4RTE", "")"" +
+	     OBSNOW("DPT #4SITE", "")"" +
+	     OBSNOW("DPT #4VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("DPT #5")<>""
+	     OBSNOW("DPT #5", "")"" +
+	     OBSNOW("DPT #5BY", "")"" +
+	     OBSNOW("DPT #5DOSE", "")"" +
+	     OBSNOW("DPT #5EXP", "")"" +
+	     OBSNOW("DPT #5LOT", "")"" +
+	     OBSNOW("DPT #5MFR", "")"" +
+	     OBSNOW("DPT #5RTE", "")"" +
+	     OBSNOW("DPT #5SITE", "")"" +
+	     OBSNOW("DPT #5VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("DPT #6")<>""
+	     OBSNOW("DPT #6", "")"" +
+	     OBSNOW("DPT #6BY", "")"" +
+	     OBSNOW("DPT #6DOSE", "")"" +
+	     OBSNOW("DPT #6EXP", "")"" +
+	     OBSNOW("DPT #6LOT", "")"" +
+	     OBSNOW("DPT #6MFR", "")"" +
+	     OBSNOW("DPT #6RTE", "")"" +
+	     OBSNOW("DPT #6SITE", "")"" +
+	     OBSNOW("DPT #6VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+
+fn clearHepA(){
+   COND
+	CASE OBSNOW("HEPAVAX #1")<>""
+	     OBSNOW("HEPAVAX#1", "")"" +
+	     OBSNOW("HEPAVAX#1 BY", "")"" +
+	     OBSNOW("HEPAVAX#1DSE", "")"" +
+	     OBSNOW("HEPAVAX#1EXP", "")"" +
+	     OBSNOW("HEPAVAX#1LOT", "")"" +
+	     OBSNOW("HEPAVAX#1MFR", "")"" +
+	     OBSNOW("HEPAVAX#1RTE", "")"" +
+	     OBSNOW("HEPAVAX#1SIT", "")"" +
+	     OBSNOW("HEPAVAX#1VIS", "")"" 
+	     + "Today's Hep A cleared from flowsheet."
+	CASE OBSNOW("HEPAVAX #2")<>""
+	     OBSNOW("HEPAVAX#2", "")"" +
+	     OBSNOW("HEPAVAX#2BY", "")"" +
+	     OBSNOW("HEPAVAX#2DSE", "")"" +
+	     OBSNOW("HEPAVAX#2EXP", "")"" +
+	     OBSNOW("HEPAVAX#2LOT", "")"" +
+	     OBSNOW("HEPAVAX#2MFR", "")"" +
+	     OBSNOW("HEPAVAX#2RTE", "")"" +
+	     OBSNOW("HEPAVAX#2SIT", "")"" +
+	     OBSNOW("HEPAVAX#2VIS", "")"" 
+	     + "Today's Hep A cleared from flowsheet."
+	ENDCOND
+}
+
+
+fn clearHepB(){
+   COND
+	CASE OBSNOW("HEPBVAX#1")<>""
+	     OBSNOW("HEPBVAX#1", "")"" +
+	     OBSNOW("HEPBVAX#1BY", "")"" +
+	     OBSNOW("HEPBVAX#1DSE", "")"" +
+	     OBSNOW("HEPBVAX#1EXP", "")"" +
+	     OBSNOW("HEPBVAX#1LOT", "")"" +
+	     OBSNOW("HEPBVAX#1MFR", "")"" +
+	     OBSNOW("HEPBVAX#1RTE", "")"" +
+	     OBSNOW("HEPBVAX#1SIT", "")"" +
+	     OBSNOW("HEPBVAX#1VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEPBVAX#2")<>""
+	     OBSNOW("HEPBVAX#2", "")"" +
+	     OBSNOW("HEPBVAX#2BY", "")"" +
+	     OBSNOW("HEPBVAX#2DSE", "")"" +
+	     OBSNOW("HEPBVAX#2EXP", "")"" +
+	     OBSNOW("HEPBVAX#2LOT", "")"" +
+	     OBSNOW("HEPBVAX#2MFR", "")"" +
+	     OBSNOW("HEPBVAX#2RTE", "")"" +
+	     OBSNOW("HEPBVAX#2SIT", "")"" +
+	     OBSNOW("HEPBVAX#2VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEPBVAX#3")<>""
+	     OBSNOW("HEPBVAX#3", "")"" +
+	     OBSNOW("HEPBVAX#3BY", "")"" +
+	     OBSNOW("HEPBVAX#3DSE", "")"" +
+	     OBSNOW("HEPBVAX#3EXP", "")"" +
+	     OBSNOW("HEPBVAX#3LOT", "")"" +
+	     OBSNOW("HEPBVAX#3MFR", "")"" +
+	     OBSNOW("HEPBVAX#3RTE", "")"" +
+	     OBSNOW("HEPBVAX#3SIT", "")"" +
+	     OBSNOW("HEPBVAX#3VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEPBVAX#4")<>""
+	     OBSNOW("HEPBVAX#4", "")"" +
+	     OBSNOW("HEPBVAX#4BY", "")"" +
+	     OBSNOW("HEPBVAX#4DSE", "")"" +
+	     OBSNOW("HEPBVAX#4EXP", "")"" +
+	     OBSNOW("HEPBVAX#4LOT", "")"" +
+	     OBSNOW("HEPBVAX#4MFR", "")"" +
+	     OBSNOW("HEPBVAX#4RTE", "")"" +
+	     OBSNOW("HEPBVAX#4SIT", "")"" +
+	     OBSNOW("HEPBVAX#4VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+fn clearHIB(){
+   COND
+	CASE OBSNOW("HEMINFB#1")<>""
+	     OBSNOW("HEMINFB#1", "")"" +
+	     OBSNOW("HEMINFB#1BY", "")"" +
+	     OBSNOW("HEMINFB#1DSE", "")"" +
+	     OBSNOW("HEMINFB#1EXP", "")"" +
+	     OBSNOW("HEMINFB#1LOT", "")"" +
+	     OBSNOW("HEMINFB#1MFR", "")"" +
+	     OBSNOW("HEMINFB#1RTE", "")"" +
+	     OBSNOW("HEMINFB#1SIT", "")"" +
+	     OBSNOW("HEMINFB#1VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#2")<>""
+	     OBSNOW("HEMINFB#2", "")"" +
+	     OBSNOW("HEMINFB#2BY", "")"" +
+	     OBSNOW("HEMINFB#2DSE", "")"" +
+	     OBSNOW("HEMINFB#2EXP", "")"" +
+	     OBSNOW("HEMINFB#2LOT", "")"" +
+	     OBSNOW("HEMINFB#2MFR", "")"" +
+	     OBSNOW("HEMINFB#2RTE", "")"" +
+	     OBSNOW("HEMINFB#2SIT", "")"" +
+	     OBSNOW("HEMINFB#2VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#3")<>""
+	     OBSNOW("HEMINFB#3", "")"" +
+	     OBSNOW("HEMINFB#3BY", "")"" +
+	     OBSNOW("HEMINFB#3DSE", "")"" +
+	     OBSNOW("HEMINFB#3EXP", "")"" +
+	     OBSNOW("HEMINFB#3LOT", "")"" + 
+	     OBSNOW("HEMINFB#3MFR", "")"" +
+	     OBSNOW("HEMINFB#3RTE", "")"" +
+	     OBSNOW("HEMINFB#3SIT", "")"" +
+	     OBSNOW("HEMINFB#3VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#4")<>""
+	     OBSNOW("HEMINFB#4", "")"" +
+	     OBSNOW("HEMINFB#4BY", "")"" +
+	     OBSNOW("HEMINFB#4DSE", "")"" +
+	     OBSNOW("HEMINFB#4EXP", "")"" +
+	     OBSNOW("HEMINFB#4LOT", "")"" +
+	     OBSNOW("HEMINFB#4MFR", "")"" +
+	     OBSNOW("HEMINFB#4RTE", "")"" +
+	     OBSNOW("HEMINFB#4SIT", "")"" +
+	     OBSNOW("HEMINFB#4VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+fn clearHPV(){
+   COND
+	CASE OBSNOW("HEMINFB#1")<>""
+	     OBSNOW("HEMINFB#1", "")"" +
+	     OBSNOW("HEMINFB#1BY", "")"" +
+	     OBSNOW("HEMINFB#1DSE", "")"" +
+	     OBSNOW("HEMINFB#1EXP", "")"" +
+	     OBSNOW("HEMINFB#1LOT", "")"" +
+	     OBSNOW("HEMINFB#1MFR", "")"" +
+	     OBSNOW("HEMINFB#1RTE", "")"" +
+	     OBSNOW("HEMINFB#1SIT", "")"" +
+	     OBSNOW("HEMINFB#1VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#2")<>""
+	     OBSNOW("HEMINFB#2", "")"" +
+	     OBSNOW("HEMINFB#2BY", "")"" +
+	     OBSNOW("HEMINFB#2DSE", "")"" +
+	     OBSNOW("HEMINFB#2EXP", "")"" +
+	     OBSNOW("HEMINFB#2LOT", "")"" +
+	     OBSNOW("HEMINFB#2MFR", "")"" +
+	     OBSNOW("HEMINFB#2RTE", "")"" +
+	     OBSNOW("HEMINFB#2SIT", "")"" +
+	     OBSNOW("HEMINFB#2VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#3")<>""
+	     OBSNOW("HEMINFB#3", "")"" +
+	     OBSNOW("HEMINFB#3BY", "")"" +
+	     OBSNOW("HEMINFB#3DSE", "")"" +
+	     OBSNOW("HEMINFB#3EXP", "")"" +
+	     OBSNOW("HEMINFB#3LOT", "")"" + 
+	     OBSNOW("HEMINFB#3MFR", "")"" +
+	     OBSNOW("HEMINFB#3RTE", "")"" +
+	     OBSNOW("HEMINFB#3SIT", "")"" +
+	     OBSNOW("HEMINFB#3VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#4")<>""
+	     OBSNOW("HEMINFB#4", "")"" +
+	     OBSNOW("HEMINFB#4BY", "")"" +
+	     OBSNOW("HEMINFB#4DSE", "")"" +
+	     OBSNOW("HEMINFB#4EXP", "")"" +
+	     OBSNOW("HEMINFB#4LOT", "")"" +
+	     OBSNOW("HEMINFB#4MFR", "")"" +
+	     OBSNOW("HEMINFB#4RTE", "")"" +
+	     OBSNOW("HEMINFB#4SIT", "")"" +
+	     OBSNOW("HEMINFB#4VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+fn clearVari(){
+   COND
+	CASE OBSNOW("HEMINFB#1")<>""
+	     OBSNOW("HEMINFB#1", "")"" +
+	     OBSNOW("HEMINFB#1BY", "")"" +
+	     OBSNOW("HEMINFB#1DSE", "")"" +
+	     OBSNOW("HEMINFB#1EXP", "")"" +
+	     OBSNOW("HEMINFB#1LOT", "")"" +
+	     OBSNOW("HEMINFB#1MFR", "")"" +
+	     OBSNOW("HEMINFB#1RTE", "")"" +
+	     OBSNOW("HEMINFB#1SIT", "")"" +
+	     OBSNOW("HEMINFB#1VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#2")<>""
+	     OBSNOW("HEMINFB#2", "")"" +
+	     OBSNOW("HEMINFB#2BY", "")"" +
+	     OBSNOW("HEMINFB#2DSE", "")"" +
+	     OBSNOW("HEMINFB#2EXP", "")"" +
+	     OBSNOW("HEMINFB#2LOT", "")"" +
+	     OBSNOW("HEMINFB#2MFR", "")"" +
+	     OBSNOW("HEMINFB#2RTE", "")"" +
+	     OBSNOW("HEMINFB#2SIT", "")"" +
+	     OBSNOW("HEMINFB#2VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#3")<>""
+	     OBSNOW("HEMINFB#3", "")"" +
+	     OBSNOW("HEMINFB#3BY", "")"" +
+	     OBSNOW("HEMINFB#3DSE", "")"" +
+	     OBSNOW("HEMINFB#3EXP", "")"" +
+	     OBSNOW("HEMINFB#3LOT", "")"" + 
+	     OBSNOW("HEMINFB#3MFR", "")"" +
+	     OBSNOW("HEMINFB#3RTE", "")"" +
+	     OBSNOW("HEMINFB#3SIT", "")"" +
+	     OBSNOW("HEMINFB#3VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#4")<>""
+	     OBSNOW("HEMINFB#4", "")"" +
+	     OBSNOW("HEMINFB#4BY", "")"" +
+	     OBSNOW("HEMINFB#4DSE", "")"" +
+	     OBSNOW("HEMINFB#4EXP", "")"" +
+	     OBSNOW("HEMINFB#4LOT", "")"" +
+	     OBSNOW("HEMINFB#4MFR", "")"" +
+	     OBSNOW("HEMINFB#4RTE", "")"" +
+	     OBSNOW("HEMINFB#4SIT", "")"" +
+	     OBSNOW("HEMINFB#4VIS", "")"" 
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+fn clearMMR(){
+   COND
+	CASE OBSNOW("HEMINFB#1")<>""
+	     OBSNOW("HEMINFB#1", "")"" +
+	     OBSNOW("HEMINFB#1BY", "")"" +
+	     OBSNOW("HEMINFB#1DSE", "")"" +
+	     OBSNOW("HEMINFB#1EXP", "")"" +
+	     OBSNOW("HEMINFB#1LOT", "")"" +
+	     OBSNOW("HEMINFB#1MFR", "")"" +
+	     OBSNOW("HEMINFB#1RTE", "")"" +
+	     OBSNOW("HEMINFB#1SIT", "")"" +
+	     OBSNOW("HEMINFB#1VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#2")<>""
+	     OBSNOW("HEMINFB#2", "")"" +
+	     OBSNOW("HEMINFB#2BY", "")"" +
+	     OBSNOW("HEMINFB#2DSE", "")"" +
+	     OBSNOW("HEMINFB#2EXP", "")"" +
+	     OBSNOW("HEMINFB#2LOT", "")"" +
+	     OBSNOW("HEMINFB#2MFR", "")"" +
+	     OBSNOW("HEMINFB#2RTE", "")"" +
+	     OBSNOW("HEMINFB#2SIT", "")"" +
+	     OBSNOW("HEMINFB#2VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#3")<>""
+	     OBSNOW("HEMINFB#3", "")"" +
+	     OBSNOW("HEMINFB#3BY", "")"" +
+	     OBSNOW("HEMINFB#3DSE", "")"" +
+	     OBSNOW("HEMINFB#3EXP", "")"" +
+	     OBSNOW("HEMINFB#3LOT", "")"" + 
+	     OBSNOW("HEMINFB#3MFR", "")"" +
+	     OBSNOW("HEMINFB#3RTE", "")"" +
+	     OBSNOW("HEMINFB#3SIT", "")"" +
+	     OBSNOW("HEMINFB#3VIS", "")"" +
+	     + "Today's Hep B cleared from flowsheet."
+	CASE OBSNOW("HEMINFB#4")<>""
+	     OBSNOW("HEMINFB#4", "")"" +
+	     OBSNOW("HEMINFB#4BY", "")"" +
+	     OBSNOW("HEMINFB#4DSE", "")"" +
+	     OBSNOW("HEMINFB#4EXP", "")"" +
+	     OBSNOW("HEMINFB#4LOT", "")"" +
+	     OBSNOW("HEMINFB#4MFR", "")"" +
+	     OBSNOW("HEMINFB#4RTE", "")"" +
+	     OBSNOW("HEMINFB#4SIT", "")"" +
+	     OBSNOW("HEMINFB#4VIS", "")""
+	     + "Today's Hep B cleared from flowsheet."
+	ENDCOND
+}
+
+***********************************************PREDM**************************************************

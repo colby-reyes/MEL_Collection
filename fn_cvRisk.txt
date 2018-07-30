@@ -1,0 +1,33 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||||||                 |||||||||||
+|||||||||||   fn cvRisk()   |||||||||||
+|||||||||||                 |||||||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+fn cvRisk(){
+// fn is a copy of ControlPanel fn to calculate ASCVD risk 
+// returns 10-year and 30-year ASCVD risk when applicable
+
+local lReturn,lAge,risk10yr
+lReturn = ""
+lAge = PATIENT_AGE()
+risk10yr = obsany("CVRISK10")
+cond
+  case gCM_PROB_ASCVD == "YES" : lReturn = "Patient has ASCVD"
+  case GetHighestValueInfo(gCM_LDL_Obs,"value",ldl) > 190 : lReturn = "not clculated: LDL > 190"
+  case lAge > 79 : lReturn = "Age >79, No ASCVD"
+  case lAge >= 40 and lAge <= 79:
+    if risk10Yr == "" then
+      lReturn = "?"
+    else if risk10Yr >= 7.5 or lAge > 59 then
+      lReturn = risk10Yr + "%"		/**"%/--"**/
+    else
+      lReturn = risk10Yr + "%" 		/**+ " / " + risk30Yr + "%"**/
+    endif endif
+  case lAge < 40 and gCM_PROB_DMDx == "YES" : lReturn = "Not calculated: DM, Age <40"		/** --/" + if risk30Yr <> "" then risk30Yr + "%" else "?" endif**/
+  case lAge >= 20 : lReturn = "Not calculated: age criteria not met" /**"--/" + if risk30Yr <> "" then risk30Yr + "%" else "?" endif**/
+  case lAge < 20 and gCM_PROB_ASCVD == "NO" : lReturn = "Not calculated: age criteria not met"
+endcond
+return lReturn
+}

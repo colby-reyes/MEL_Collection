@@ -1,0 +1,32 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||				|||||||
+|||||||  fn template_obsDate()	|||||||
+|||||||				|||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+
+
+fn template_obsDate(_obs){
+// fn returns formatted string date for most recent obs in _obs
+// _obs = carat delimited set of obsterms
+
+
+local obs
+obs = copy(_obs)
+
+obs = most_recent_obs(obs)
+
+if obsany(obs)==""
+then "Value not found"
+else lastobsdate(obs)
+endif
+}
+
+
+
+
+
+
+

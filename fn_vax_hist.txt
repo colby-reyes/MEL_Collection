@@ -1,0 +1,26 @@
+||||||||||||||||||||||||||||||||||||||||
+|||||||||||                  |||||||||||
+|||||||||||  fn vax_hist()   |||||||||||
+|||||||||||                  |||||||||||
+||||||||||||||||||||||||||||||||||||||||
+
+
+fn vax_hist(_vaxObs,_declnObs,_vaxName){
+
+local obs,declnObs,vaxName
+
+vaxObs = copy(_vaxObs)
+declnObs = copy(_declnObs)
+vaxName = copy(_vaxName)
+
+IF 
+DURATIONDAYS(LASTOBSDATE(declnObs), LASTOBSDATE(vaxObs)) > 0 OR OBSANY(declnObs) == ""
+
+THEN 
+CFMT(template_obs(vaxObs),"","Last "+ str(vaxName) +" vaccine: " ,"","","")
+
+ELSE 
+CFMT(LASTOBSDATE(declnObs),"",str(vaxName) +" vaccine declined on ","","") + cfmt(lastobsdate(vaxObs),"","  //  Last " + str(vaxName) + "vaccine before declination: ","","")
+
+ENDIF 
+}

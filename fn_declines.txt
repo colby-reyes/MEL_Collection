@@ -1,0 +1,87 @@
+//////////////////////////////////////////////////////////
+/////////////                                /////////////
+/////////////  Preventive Care Declinations  /////////////
+/////////////                                /////////////
+//////////////////////////////////////////////////////////
+
+
+fn declines(_name,_declnObs,_cmObs,_hold){
+
+// _name = name of the vaccine/service being declined
+// _declnObs = obs term for vax/service declination
+// _cmObs = obs term populated by "Hold" functionality
+//	(obs always named "CM***")
+// _hold = hold time in months (default is 12 months)
+
+local name,decln,cm,hold,lreturn
+
+global errmess = str("fn declines(name, declnObs, cmObs, hold)"+HRET+"---------------------------------------------------------" + HRET + "Not enough arguments!!!  -- Arguments are as follows: " + HRET + HRET + "--- name = name of the vaccine/service being declined." + HRET + HRET + "--- declnObs = obs term for vax/service declination." + HRET + HRET + "--- cmObs = obs term populated by Hold functionality." + HRET + HRET + "--- hold = hold time in months(default is 12 months)")
+
+name = if ok(_name) then copy(_name) else userok(errmess) endif
+decln = if ok(_declnObs) then copy(_declnObs) else userok(errmess) endif
+cm = if ok(_cmObs) then copy(_cmObs) else userok(errmess) endif
+if ok(_hold) then hold = copy(_hold) else hold = "12" endif 
+
+obsnow(str(decln),"declined")"" +
+obsnow(str(cm),"Hold|Patient declined|"+adddates(str(._todaysdate),"0",hold,"0"),str(._todaysdate))"" + HRET +
+"Offered " + str(name) + ", pt declined"
+}
+
+
+
+//reference:
+/**
+.statinno = Offered statin, pt {OBSNOW("REF STATINS", "declined")}.
+	    {obsnow("CM STAT INTV","Hold|Patient declined|"+adddates(str(._todaysdate),"1","0","0"),str(._todaysdate))}
+
+//***<-------- Immunization Declinations -------->***//
+     QT		||    _declnObs	    ||     _name	 ||	_cmObs
+____________________________________________________________________________________
+.dptno		||  "DPTDECLN"      ||   DPT    	 ||   
+.fluno		||  "FLUVAXDECLN"   ||   Flu    	 ||   CM FLU INTV
+.hepano		||  "HEPADECL"      ||   Hep A   	 ||   CM HEPA INTV
+.hepbno		||  "HEPBDECL"      ||   Hep B   	 ||   CM HEPB INTV
+.hpvno		||  "HPVDECLINE"    ||   HPV   		 ||   CM HPV INTV
+.meningno	||  "MENINGDECLN"   ||   Meningococcal   ||   CM MGC INTV
+.mmrno		||  "MMRDECLN"      ||   MMR    	 ||   CM MMR INTV
+.pneumovaxno	||  "PNEUVAXDECL"   ||   Pneumovax   	 ||   CM PNEU INTV
+.pneupedno	||  "PNEUPEDDECL"   ||   Pneumococcal    ||   *?*CM PNEU INTV
+.prevnarno	||  "PREVADDECLN"   ||   Adult Prevnar   ||   *?*CM PNEU INTV
+.poliono	||  "POLIODECLN"    ||   Polio    	 ||   
+.rabiesno	||  "RABIESVAXRNG"  ||   Rabies    	 ||   
+.rotano		||  "ROTADECLN"     ||   Rotavirus    	 ||   
+.tdapno		||  "TDTDAPREFUSD"  ||   Tdap   	 ||   CM TDAP INTV
+.tdno		||  "TDTDAPREFUSD"  ||   TD    		 ||   CM TDAP INTV
+.travvaccineno	||  "TRAVVACDECLN"  ||   Travel    	 ||   
+.varicellano	||  "VARICELDECL"   ||   Varicella    	 ||   CM VAR INTV
+.zosterno	||  "ZOSTREFUSED"   ||   Zoster   	 ||   CM ZOST INTV
+
+
+//***<-------- Miscellaneous Declinations -------->***//
+     QT		||    _declnObs	    ||      _name		  	       ||      _cmObs
+__________________________________________________________________________________________________
+.aceno		||  "NOTONACEINHB"  ||   ACE Inhibitor declination    	       ||   CM AA INTV; CM AANH INTV
+.aspirinno	||  "ASAcontraRef"  ||   Asprin declination    	 	       ||   CM ASA INTV
+.betano		||  "BTABLCKREF"    ||   beta blocker declination    	       ||   CM BBLK INTV
+.breastusno	||  "USBREASTCOMM"  ||   breast u/s declination    	       ||   *?*
+.colonno	||  "COLONRECACT"   ||   colonoscopy declination    	       ||   CM CRC INTV
+.colpono	||  "COLPO DECLN"   ||   colposcopy declination    	       ||   *?*
+.dexano		||  "DEXA PT"       ||   dexa declination    	               ||   *?* CM OPSC INTV *?*
+.embno		||  "EMB DECLN"     ||   EMB declination    	 	       ||   *?*
+.flexsigno	||  "FLEXSIG DECL"  ||   flexible sigmoidoscopy declination    ||   *?*
+.genprobeno	||  "GENPROBEDECL"  ||   genprobe declination    	       ||   *?*
+.hemoccultno	||  "RSNNOHEMO"     ||   hemoccult declination    	       ||   *?*
+.hivno		||  "RFSD HIV TST"  ||   HIV test declination    	       ||   CM HIV INTV
+.ifobno		||  "IFOBT DECLN"   ||   iFOB declination    	               ||   *?*
+.mammono	||  "MAMMRECACT"    ||   mammogram declination    	       ||   CM BR INTV
+.papno		||  "PAPRECACT"     ||   pap declination    	 	       ||   CM CERV INTV
+.ppd		||  "TBSCRDECLN"    ||   PPD declination    	 	       ||   
+.psano		||  "PSARECACT"     ||   PSA declination    	 	       ||   
+.quadno		||  "QUADSCR DECL"  ||   Quad Screen Declination    	       ||   
+.spirono	||  "SPIROEXCLUS"   ||   Spirometry declination     	       ||   CM SPIR ITV
+.statinno	||  "REF STATINS"   ||   Statin declination    	 	       ||   CM STAT INTV
+.warfarinno	||  "WARFARINREF"   ||   Warfarin declination    	       ||   CM WARF INTV
+.weightno	||  "WTREFUSED"     ||   Weight declined    	 	       ||   
+**/	
+
+

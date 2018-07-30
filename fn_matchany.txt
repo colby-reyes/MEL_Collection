@@ -1,0 +1,74 @@
+
+/////////////////////////////
+//////		       //////  
+//////  fn matchany()  //////
+//////		       //////  
+/////////////////////////////
+
+
+fn matchany(_CheckAgainst,_CheckFor,_alsom){
+// fn checks for presence of string or set of strings in another string or array
+// *if a match is found, fn returns a list of the strings found
+// *if no match found, fn returns an empty ("") value
+//  (when called to check for a positive match, should be used as matchany(....)<>"" )
+	// _CheckAgainst = string or array to search within
+	// _CheckFor = string or carat-delimited set of strings to check for
+	// _alsom = optional. if this argument is empty, will default to "Some"
+	//	    *if arg is "Some"/"S", only one of the strings must match _CheckAgainst for
+	//	        fn to return a value
+	//	    *if arg is "All"/"A" then all strings in _CheckFor must be found
+	//	        in _CheckAgainst for fn to return a value
+
+local ag,fr,sz,matches,alsom
+
+ag = copy(_CheckAgainst)
+cfr = copy(_CheckFor)
+alsom = if ok(_alsom) then copy(_alsom) else "Some" endif
+
+fr = getfield(cfr,"^","")
+userok(str(fr[1]))
+matches=""
+
+// decide path: match all vs. match some
+if match(toupper(get(alsom,1)),"A") then
+userok("Matching criteria: ALL")
+
+sz=size(fr)
+userok("Number of Terms to check for: "+str(sz))
+
+for i=1,i<=sz,i=i+1 do
+
+	strChk=get(fr,i)
+	userok("Checking for: "+str(strChk))
+	if match(ag,strChk) then
+	userok("Found in text checked against: "+str(strChk))
+		matches = str(matches+", "+strChk)
+		
+	else "" userok("Not found: "+str(strChk))""
+	     matches=""
+	     break
+	endif
+endfor
+
+
+else
+
+userok("Matching criteria: SOME")
+sz=size(fr)
+userok("Number of Terms to check for: "+str(sz))
+
+for i=1,i<=sz,i=i+1 do
+
+	strChk=get(fr,i)
+	userok("Checking for: "+str(strChk))
+	if match(str(ag),str(strChk)) then
+	userok("Found in text checked against: "+str(strChk))
+		matches = str(matches+", "+strChk)		
+	else "" userok("Not found: "+str(strChk)+"...continuing...")""
+	endif
+endfor
+
+endif
+
+return str(matches)
+}

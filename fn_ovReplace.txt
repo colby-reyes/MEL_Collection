@@ -1,0 +1,64 @@
+
+
+
+fn ovReplace(){obsnow("CARETRANSIN", "N") +HRET+	
+obsnow("GAD SCORE", "4") +HRET+  
+obsnow("GAD2 SCORE", "2") +HRET+  
+obsnow("PHQ9 LVL FX", "Not Difficult at All") +HRET+  
+obsnow("PHQ2", "1") +HRET+  
+obsnow("CLINICALSUM", "yes") +HRET+  
+obsnow("MEDLISTPRTD", "yes") +HRET+  
+obsnow("INSTRUCTIONS", "Please stop at the registration desk or call the clinic to schedule a follow-up appointment in 4 weeks.") +HRET+  
+obsnow("FU APPT DUE", "07/03/2018") +HRET+  
+obsnow("AUDITQUEST2", "0 to 2") +HRET+  
+obsnow("AUDITQUEST1", "2-4 times a month") +HRET+  
+obsnow("NIDA SCORE", "Positive") +HRET+  
+obsnow("CRFTRXUSE", "never") +HRET+  
+obsnow("RECDRGUSENOW", "never") +HRET+  
+obsnow("CRAFFT12MOQ2", "daily or almost daily") +HRET+
+obsnow("PAST SURG HX", "none") +HRET+  
+obsnow("PAST MED HX", "h.o rectal bleeding") +HRET+  
+obsnow("MEDS REVIEW", "Done") +HRET+  
+obsnow("NKMED", "F") +HRET+  
+obsnow("MEDRECON", "yes") +HRET+  
+obsnow("NKA", "T") +HRET+  
+obsnow("ALLERGY REV", "Done") +HRET+  
+obsnow("PROBLEMS REV", "Done") +HRET+  
+obsnow("NKPROB", "F") +HRET+  
+obsnow("JCAHO NPSG13", "Complete") +HRET+  
+obsnow("LITERACY_BAR", "happy with reading ability") +HRET+  
+obsnow("TRIGLEARNLNG", "no") +HRET+  
+obsnow("COG", "no") +HRET+  
+obsnow("VISUA IMPAIR", "sees well") +HRET+  
+obsnow("HEAR IMPAIR", "hears well") +HRET+  
+obsnow("LEARN BARIER", "English") +HRET+  
+obsnow("PAIN NOW?", "no") +HRET+  
+obsnow("PATPORTALPIN", "Y161854643") +HRET+  
+obsnow("BSA", "2.06") +HRET+  
+obsnow("BP DIASTOLIC", "62 mmHg") +HRET+ 
+obsnow("BP SYSTOLIC", "122 mmHg") +HRET+ 
+obsnow("PULSE RHYTHM", "regular") +HRET+ 
+obsnow("PULSE RATE", "64 /min") +HRET+ 
+obsnow("TEMP SITE", "oral") +HRET+  
+obsnow("TEMP(DEG C)", "36.61 deg C") +HRET+ 
+obsnow("TEMPERATURE", "97.9 deg F") +HRET+ 
+obsnow("WEIGHT (KG)", "99.64 kg") +HRET+ 
+obsnow("BMI", "36.61 kg/m2") +HRET+ 
+obsnow("WEIGHT", "219.20 lb") +HRET+ 
+obsnow("HEIGHT (CM)", "165.10 cm") +HRET+ 
+obsnow("HEIGHT", "65 in") +HRET+ 
+obsnow("PRIMARY MD", "Amy McLaughlin PA-C") +HRET+  
+obsnow("HPI", "Yurethzi Cuevas is here for general check up
+pt c/o having cough x1day and sore throat x1month
+Has patient been seen by another provider since last visit to LCHC? No 
+...................................................................Evelin Santiago  June  5, 2018 4:42 PM
+
+Pt presents to establish care. 
+has had rectal bleeding twice in past (3 months ago)--went to Northwestern hospital twice and wasn't told exactly what it was. 
+bleeding on TP, occurs after having constipation.
+c/o SOB x 3-4 years")}
+
+
+
+
+

@@ -1,0 +1,77 @@
+
+///////////////////////////////////////////////////
+/////////////////		  /////////////////
+/////////////////  fn cervTest()  /////////////////
+/////////////////		  /////////////////
+///////////////////////////////////////////////////
+
+/*
+
+Want results returned in format:
+
+[06/08/2017] Pap smear: ASC-Us // HPV: NEGATIVE // HPV: NEGATIVE
+[03/27/2015] Cerv Bx Results: cx CIN 1 Margins negative + inflammation 
+[02/10/2015] Pap Smear: LSIL // HPV Results: Not Detected 
+[11/14/2012] Pap Smear: LSIL
+Recommendations: Pap smear 1 yr with HPV cotesting (3/27/2015)
+
+*/
+
+fn cervTest(){
+local lreturn,txtAry,obsAry,numRet,pap,hpv,geno,cerv
+
+//<------ Arys for retrieving values ------>//
+txtAry = array(0,0,0,0)
+obsAry = array("PAP SMEAR","HPV-DNA","HPV GENOTYPE","CERVICALPATH")
+numRet = array("3","3","1","1")
+
+//<------ Preceding Text ------>//
+txtLBL = array("Last 3 Pap Smear Results: ","Last 3 HPV Results: ","HPV Genotype: ","Cerv Bx Results: ")
+
+
+for i=1,i<=size(obsAry),i=i+1 do
+
+local obs = get(obsAry,i)
+local num = get(numRet,i)
+
+if ccc_extr_specific_ObsValDates("",obs,"S",num,"N","   //   ","I","","","") <> "" 
+then txtAry[i] = getfield(ccc_extr_specific_ObsValDates("",obs,"S",num,"N","   //   ","I","","",""),"   //   ","") else "" endif 
+
+endfor
+
+for ... do
+// <> loop through and add new line of array([date],obs1,obs2,...) <> //
+//	> new lines created in or after "for" loop? >> check Dan's code
+endfor
+
+
+
+
+// ****keep section below****
+
+if (ccc_extr_specific_ObsValDates("","PAPRECACT","S","1","N","","I","","","") <> "" or ccc_extr_specific_ObsValDates("","COLPOCOM","S","1","N","","I","","","") <> "") 
+then ("\nRecommendations: " + 
+	IF DURATIONDAYS(ccc_extr_specific_ObsValDates("","PAPRECACT","S","1","N","","D","","",""),ccc_extr_specific_ObsValDates				("","COLPOCOM","S","1","N","","D","","",""))>0 
+	THEN ccc_extr_specific_ObsValDates("","PAPRECACT","S","1","N","","I","","","") 
+	ELSE ccc_extr_specific_ObsValDates ("","COLPOCOM","S","1","N","","I","","","") 
+	ENDIF) 
+else "" endif +
+
+// ****end of section to keep**** 
+
+cfmt(OBSNOW("ECC"), "", "\nECC: ", "", "", "") + cfmt(OBSNOW("LEEP CERVIX"), "", "\nLEEP: ", "", "", "")
+}
+
+
+
+//////////////////////////////////////////
+/*					*/
+/* fn ideas for arranging .cerv results */
+/*					*/
+//////////////////////////////////////////
+
+
+fn arrangeByDate(){
+
+
+}

@@ -1,0 +1,182 @@
+||||||||||||||||||||||||||||||||||||||||||
+||||||||||                      ||||||||||
+|||||||||| .PREVENT FINAL DRAFT |||||||||| 
+||||||||||                      ||||||||||
+||||||||||||||||||||||||||||||||||||||||||
+
+
+fn prevent(){
+// this fn relies on template_obs() and template_obsDate() >> see fn files for use instructions
+
+
+local n1,n2,days
+n1=List_BP_systolic_obs()
+n2=List_BP_diastolic_obs()
+
+"Last BP:  " + ccc_r_a_o_a(n1) + "/" + ccc_r_a_o_a(n2) + " (" + ccc_r_a_o_L_D(n1) + ")   //   " + IF PATIENT_AGE() > 50 THEN "Glaucoma screen: " + template_obs("GLAUCOMASCRN") ELSE "" ENDIF + HRET +
+
+"Last lipid:    " + lipidtemp() + HRET +
+
+IF PATIENT_AGE()>=45 AND PATIENT_AGE()<=75 AND val(OBSANY("BMI"))>25
+THEN cfmt(template_obs("BG FINGER^HGBA1C^GLUCOSE"),"", "Last diabetes screen:  ","","") + HRET
+ELSE ""
+ENDIF +
+
+"Smoking:  " + template_obs("SMOK STATUS") + "   //   Alcohol: " + 
+IF obsany("ALCOHOL COMM")<>"" THEN obsany("ALCOHOL COMM") ELSE template_obs("AUDITQUEST1")  ENDIF + 
+"   //   Drug Use: "+ template_obs("DRUG USE") + CFMT(OBSANY("DRUGOFCHOICE"),""," [hx: ","","]","") + cfmt(template_obs("PHQ-9 SCORE"),"","   //   Last PHQ-9: ","","","") +  HRET +
+
+IF PATIENT_AGE() >= 15 AND PATIENT_AGE() < 66
+THEN "Last HIV screen: " + (IF match(PROB_AFTER("delimited"),"ICD10-B20")>0 
+THEN "Patient is HIV positive. "
+ELSE CFMT(template_obsDate("HIV AB"),"", "HIV screen (","","): " + OBSANY("HIV AB"),"") + CFMT(LASTOBSDATE("RFSD HIV TST"),""," HIV Screen declined on ","", " ")
+ENDIF)  + "   //   "
+ELSE ""
+ENDIF  +
+
+preventftemp() +
+
+IF DURATIONDAYS("01/01/1945", str(PATIENT.DATEOFBIRTH))>=0 AND DURATIONDAYS(str(PATIENT.DATEOFBIRTH), "12/31/1965")>=0
+THEN "Last Hepatitis C: " + obsany("HEP C AB") + HRET
+ELSE ""
+ENDIF +
+
+vax_hist("FLU VAX","FLUVAXDECLN","Flu") + "   //   " + vax_hist("TD BOOSTER","TDTDAPREFUSD", "Tetanus") + HRET +
+
+vax_hist("PNEUMOVAX","PNEUVAXDECL","Pneumovax") + "   //   " + vax_hist("PCV13#1","PREVADDECLN","PCV13") + "   //   " + vax_hist("ZOSTAVAX","ZOSTREFUSED","Zoster") +  HRET +
+
+cfmt(template_obs("IFOBT"),"","Last FIT/iFOB:  ","","","") 
++ cfmt(template_obs("COLONOSCOPY"),"","    //   Last colonoscopy: ","","","") 
++ "    //   Colonoscopy due: " + newDueDate("COLONNXTDUE") 
++ CFMT(LASTOBSDATE("PT DCLN COLN"),""," declined on ","", " ") + CFMT(LASTOBSDATE("COLONRECACT"),""," declined on ","", " ") +  HRET +
+
+IF obsany("SMOK STATUS") <> "" AND obsany("SMOK STATUS") <> "never smoker" AND PATIENT_AGE() >= 65 AND PATIENT_AGE() <= 70 AND PATIENT.SEX == "M"
+THEN cfmt(template_obs("AAASCREENING"),"","AAA Screen:  ","","","") + HRET
+ELSE ""
+ENDIF +
+
+IF PATIENT_AGE() >= 55 AND PATIENT_AGE() <= 80 AND val(obsany("SMOK HX TOTA"))>30 AND compare_Years(obsany("SMOK YR Q")) > 15
+THEN "Lung Cancer:  High Risk   //   " 
+ELSE "" 
+ENDIF + IF PATIENT.SEX == "M" THEN "Last PSA: " + template_obs("PSA") ELSE "" ENDIF  +  HRET +
+
+IF PATIENT_AGE() > 65
+THEN preventger()
+ELSE ""
+ENDIF
+}
+
+
+
+
+
+
+
+
+
+fn preventftemp(){
+IF PATIENT.SEX == "F"
+THEN 
+IF PATIENT_AGE() > 40 THEN
+cfmt(template_obs("MAMMOGRAM"),"","Last mammogram: ","","   //   ","")
++"Mammo due: " + newDueDate("MAMMO DUE") + HRET ELSE "" ENDIF
++ IF PATIENT_AGE()>65 THEN
+cfmt(template_obs("BON DEN DEXA"),"","Last DEXA: ","","","") + HRET
+ELSE "" ENDIF
++cfmt(template_obs("PAP SMEAR"),"","Last Pap: ","","","")
++cfmt(template_obs("HPV^HPV-DNA"),"", "   //   Last HPV: ","","","")
++"   //   Pap due: " + newDueDate("PAP DUE") + HRET
+ELSE ""
+ENDIF
+}
+
+
+
+
+
+
+
+
+
+
+fn preventger(){
+global op = "*"
+global fallScr = obsany("FALL SCR")
+global hraFR
+
+"ADL: " + template_obs("ADL ALL") + "   //   IADL: " + cfmt(template_obs("IADL ALL"),"","","","","") + HRET +
+"MMSE: " + cfmt(template_obs("MSE SCORE"),"","","","","") + "    //   Mini-Cog: " + cfmt(template_obs("COGNITIV STS"),"","","", "","") + HRET +
+
+"Balance-Gait Score (Tinetti): " + 
+COND
+CASE fallScr==""
+" Screening Due"
+CASE eval(fallScr+ op + 28) <= 18
+eval(fallScr+ op + 28) + " - High Risk (" + LASTOBSDATE("FALL SCR") +")"
+CASE eval(fallScr+ op + 28) >= 19 AND fallScr <= 23
+eval(fallScr+ op + 28) + " - Moderate Risk (" + LASTOBSDATE("FALL SCR") +")"
+CASE eval(fallScr+ op + 28) >=24
+eval(fallScr+ op + 28) + " - Low Risk (" + LASTOBSDATE("FALL SCR") +")"
+ENDCOND +
+
+CFMT(template_obs("TUG"),"","   //   TUG score: ",""," " + HRET,"")
++
+COND
+CASE val(obsany("HRAFRSCRE")) < 4
+hraFR = " - Low Risk (" + LASTOBSDATE("HRAFRSCRE") + ")"
+CASE val(obsany("HRAFRSCRE")) >= 4 
+hraFR = " - High Risk of Falling (" + LASTOBSDATE("HRAFRSCRE") + ")"
+ENDCOND
++
+cfmt(obsany("HRAFRSCRE"),"","Fall Risk Screen (low risk < 4): ","",str(hraFR),"") 
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////////////
+/////////////////                       /////////////////
+/////////////////  TEST CLEANUP FORMAT  /////////////////
+/////////////////                       /////////////////
+/////////////////////////////////////////////////////////
+
+
+Last BP:  125/83 (01/30/2018)   //   Glaucoma screen: ???
+Last lipid:    Chol: 120   	//   LDL: 90   	 
+	       HDL: 90   	//   TG: 45   	     
+				//   Panel date: (01/30/2018)
+10-Year ASCVD Risk (last):  5.2% (03/02/2018)    
+10-Year ASCVD Risk (highest): 5.20 (03/02/2018)  
+Smoking:  former smoker (01/31/2018)   		 
+Alcohol: ???   			//   Drug Use: ???   
+Last PHQ-9: ???			//
+Last mammogram: ???             //   Mammo due: No Due Date set
+Last DEXA: ???			//
+Last Pap: ???	  	        //   Pap due: No Due Date set
+Last HPV: ???  			//   
+Last Hepatitis C: 		//
+Last Flu vaccine: ???           //   Last Tetanus vaccine: ???
+Last Pneumovax vaccine: ???     //   Last PCV13 vaccine: ???
+Last Zoster vaccine: ???   	//   
+Last FIT/iFOB:  ???             //   
+Last colonoscopy: ???           //   Colonoscopy due: No Due Date set
+Lung Cancer:  High Risk         //   <PSA: ???>
+ADL: ???   		        //   IADL: ???
+MMSE: ???    		        //   Mini-Cog: ???
+Balance-Gait Score (Tinetti):  Screening Due      //   TUG score: ??? 
+Fall Risk Screen (low risk < 4):  Screening Due
+
+
+
+
+
+
+
+
+
+
+
+
+

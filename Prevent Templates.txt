@@ -1,0 +1,439 @@
+Stil to do:
+>> add age criteria to preventf and pneumovax, etc
+>> add dates of DM Scrn and Eye exam to .dm
+>> make cardio_risk() / cvRisk() variables local instead of referencing global
+>> add ok(_criteria) to template_obs so that age/sex/etc criteria can be listed just in template_obs(*)
+>> add "multi-delimited" _obs and _upDate so can use one "template_obs" call for an entire preventive qt
+
+
+
+
+fn compare_Years(_OldDate,_NewDate){
+
+global OldDate = copy(_OldDate)
+if OldDate <> "" 
+then
+global NewDate = if ok(_NewDate) then copy(_NewDate) else str(._todaysdate) endif
+
+NewDate = getfield(NewDate, "/","")
+OldDate = getfield(OldDate, "/","")
+
+global NewYear = sub(NewDate,size(NewDate),1)
+global OldYear = sub(OldDate,size(OldDate),1)
+
+global op = "-"
+global diffYears = eval(val(str(NewYear)) + op + val(str(OldYear)))
+
+// section below for test purposes:
+//       displays readout of each step
+/**
+str("NewDate Array: ", NewDate) + HRET +
+str("OldDate Array: ", OldDate) + HRET +
+HRET + 
+str("size of NewDate Array: ", size(NewDate))+ HRET +
+str("size of OldDate Array: ", size(OldDate))+ HRET +
+HRET +
+str("Current year: " + str(NewYear))+ HRET +
+str("Old year: " + str(OldYear))+ HRET + 
+HRET +
+str("operator: ", op) + HRET +
+str("Size of diffYears: ", size(diffYears))+
+if diffYears > 10 then userok("Working!")"" else userok("comparison not working yet...")"" endif + HRET +
+str(OldYear," is ", diffYears, " years before ", NewYear)
+**/
+else ""
+endif
+}
+
+
+
+
+fn template_obs(_obs){
+// obs is a carat delimited set of obsterms
+
+local obs
+obs = copy(_obs)
+
+if obsany(obs)==""
+then "Value not found"
+else lastobsvalue(obs) + cfmt(lastobsdate(obs),""," (","",")","")
+endif
+}
+
+fn template_obsDate(_obs){
+
+local obs
+obs = copy(_obs)
+
+if obsany(obs)==""
+then "Value not found"
+else lastobsdate(obs)
+endif
+}
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||
+|||||||||||                 |||||||||||
+||||||||||| test panel info |||||||||||
+|||||||||||                 |||||||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+NA:  ()  K:  (x)  CL:  ()  CO2:  ()
+AnGp:  ()  CA:  (x)  Glu:  (x)
+BUN:  (x)  Creat: 12 (x)  GFR:  ()
+
+fn bmptemp(){
+cfmt(template_obs("NA","Y"),"","NA: ","","","") + 
+cfmt(template_obs("K SERUM","Y"),"","   //   K: ","",obsUpdate("K SERUM","NA"),"") +
+cfmt(template_obs("CL SERUM","Y"),"","   //   CL: ","","","") +
+cfmt(template_obs("CO2","Y"),"","   //   CO2: ","","","") + HRET +
+cfmt(template_obs("ANION GAP","Y"),"","AnGp: ","","","") + 
+cfmt(template_obs("CALCIUM","Y"),"","   //   CA: ","",obsUpdate("CALCIUM","NA"),"")  + 
+cfmt(template_obs("GLUCOSE SER","Y"),"","   //   Glu: ","",obsUpdate("GLUCOSE SER","NA"),"") + HRET +
+cfmt(template_obs("BUN","Y"),"","BUN: ","",obsUpdate("BUN","NA"),"") + 
+cfmt(template_obs("CREATININE","Y"),"","   //   Creat: ","",obsUpdate("CREATININE","NA"),"") + 
+cfmt(template_obs("GFR","Y"),"","   //   GFR: ",""," " + if obsany("GFR")<>"" then "[MDRD-calc]" else "" endif,"") +
+cfmt(LASTOBSDATE("NA"),"","   Panel date:  (","",")","")  
+}
+
+______________________________________
+
+Tot.Bili:  (x)   Bili Dir.:  (x)   AST:  (x)
+Alk Phos:  (x)   Alb:  (x)   Prot:  (x)  ALT:  (x)   
+
+fn lfttemp(){
+cfmt(template_obs("BILI TOTAL","Y"),"","Tot Bili: ","",obsUpdate("BILI TOTAL","BILI DIRECT"),"") +
+cfmt(template_obs("BILI DIRECT","Y"),"","   //   Bili Dir: ","",obsUpdate("BILI DIRECT","BILI TOTAL"),"") +
+cfmt(template_obs("SGOT (AST)","Y"),"","   //   AST: ","",obsUpdate("SGOT (AST)","BILI TOTAL"),"") +
+cfmt(template_obs("ALK PHOS","Y"),"","   //   Alk Phos: ","",obsUpdate("ALK PHOS","BILI TOTAL"),"") + HRET +
+cfmt(template_obs("ALBUMIN","Y"),"","Alb: ","",obsUpdate("ALBUMIN","BILI TOTAL"),"") +
+cfmt(template_obs("PROTEIN, TOT","Y"),"","   //   Prot: ","",obsUpdate("PROTEIN, TOT","BILI TOTAL"),"") +
+cfmt(template_obs("SGPT (ALT)","Y"),"","   //   ALT: ","",obsUpdate("SGPT (ALT)","BILI TOTAL"),"") +
+cfmt(LASTOBSDATE("BILI TOTAL"),"","   Panel date: (","",")","")
+}
+
+_______________________________________
+
+Chol:  120 (12/15/2017)   //    LDL:  x   //    HDL: x   //   TG: x   //   10-Year ASCVD Risk: x   //   ALT:  x   //    AST: x  (11/2017)
+
+fn lipidtemp(){
+cfmt(template_obs("CHOLESTEROL","Y"),"","Chol: ","",obsUpdate("CHOLESTEROL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("LDL","Y"),"","LDL: ","",obsUpdate("LDL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("HDL","Y"),"","HDL: ","",obsUpdate("HDL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("TRIGLYCERIDE","Y"),"","TG: ","",obsUpdate("TRIGLYCERIDE","HDL") + "   //   ","") +  
+cfmt(LASTOBSDATE("TRIGLYCERIDE"),"","   Panel date: (","",")","") + HRET +
+cardio_risk() +
+cfmt(template_obs("SGPT (ALT)","Y"),"","ALT: ","",obsUpdate("SGPT (ALT)","SGOT (AST)") + "   //   ","") +
+cfmt(template_obs("SGOT (AST)","Y"),"","AST: ","",obsUpdate("SGOT (AST)","SGOT (AST)") + "   //   ","") + 
+cfmt(LASTOBSDATE("SGOT (AST)"),"","   Panel date: (","",")","")
+}
+
+/**"10-Year ASCVD Risk (last): "+cfmt(template_obs("CVRISK10"),"","","",obsUpdate("CVRISK10","TRIGLYCERIDE"),"") +
+cvRisk()**/
+_______________________________________
+
+WBC:  ()   HGB: 12.0 (x)   MCV:  ()   Platelets:  (x)
+
+fn cbctemp(){
+cfmt(template_obs("WBC","Y"),"","WBC: ","","","") +
+cfmt(template_obs("HGB","Y"),"","   //   HGB: ","",obsUpdate("HGB","WBC"),"") +
+cfmt(template_obs("MCV","Y"),"","   //   MCV: ","","","") +
+cfmt(template_obs("PLATELETS","Y"),"","   //   Platelets: ","",obsUpdate("PLATELETS","WBC"),"") +
+cfmt(LASTOBSDATE("WBC"),"","   Panel date: (","",")","")
+}
+
+_______________________________________
+x = can order independently
+
+
+||||||||||||||||||||||||||||||||||
+|||| INCLUDE BEFORE LIVE VER. ||||
+||||||||||||||||||||||||||||||||||
+
+
+
+
+fn obsUpdate(_ObsTerm,_panelTerm){
+// fn compares date of independent obs to panel obs and returns most recent date to display
+// ObsTerm = CPS observation term for any single test that is part of a panel and should be entered in quotes (e.g. "HDL")
+
+
+local obs,panel
+
+obs = copy(_ObsTerm)
+panel = copy(_panelTerm)
+
+IF match(lastobsdate(panel),lastobsdate(obs)) 
+THEN ""
+ELSE CFMT(LASTOBSDATE(obs),""," (","",") ")
+ENDIF
+
+// Example Call:
+// obsUpdate("HGB","WBC")
+// returns "*HGB date*" if it is more recent than the panel;
+// returns "" if HGB was last ordered as part of CBC panel
+// (in the above case, HGB is part of the CBC panel but can be ordered as an independent test
+// but WBC can only be ordered as part of the CBC panel.)
+}
+
+fn newDueDate(_ObsTerm){
+/*
+// Outdated due date fxn template
+// ObsTerm should be input as a CPS obsterm in quotes (e.g. "MAMMO DUE")*/
+local ObsTerm
+ObsTerm=copy(_ObsTerm)
+if match(tolower(ObsTerm),"list_")>0 and match(tolower(ObsTerm),"_obs()")>0 then ObsTerm=eval(ObsTerm) endif
+
+IF obsany(ObsTerm)==""
+THEN "No Due Date set"
+ELSE 
+	IF DURATIONDAYS(str(._TODAYSDATE), obsany(ObsTerm))<0
+	THEN obsany(ObsTerm) + "  NOTE: Due Date may be outdated. Update due-date in Control Panel"
+	ELSE obsany(ObsTerm)
+	ENDIF
+ENDIF
+}
+.......
+
+
+
+
+
+
+||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||                    |||||||||||||
+||||||||||| PREVENT M TEMPLATE |||||||||||||
+|||||||||||                    |||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||
+
+fn preventmtemp(){
+local n1,n2,days
+n1=List_BP_systolic_obs()
+n2=List_BP_diastolic_obs()
+
+"Last BP:  " + ccc_r_a_o_a(n1) + "/" + ccc_r_a_o_a(n2) + " (" + ccc_r_a_o_L_D(n1) + ")   //   " + IF PATIENT_AGE() > 50 THEN "Glaucoma screen: " + obsany("GLAUCOMASCRN") + " ("+ LASTOBSDATE("GLAUCOMASCRN") + ")" ELSE "" ENDIF + HRET +
+
+"Last lipid:    " + lipidtemp() + HRET +
+
+IF PATIENT_AGE()>=45 AND PATIENT_AGE()<=75 AND val(OBSANY("BMI"))>25
+THEN "Last diabetes screen:  " + LASTOBSDATE("BG FINGER")   
+ELSE ""
+ENDIF 
+
+"Smoking:  " + obsany("SMOK STATUS") + "   //   Alcohol: " + 
+IF obsany("ALCOHOL COMM")<>"" THEN obsany("ALCOHOL COMM") ELSE obsany("AUDITQUEST1")  ENDIF + 
+"   //   Drug Use: "+ OBSANY("DRUG USE") + ":  " + OBSANY("DRUGOFCHOICE") + "   //   Last PHQ-9: " + OBSANY("PHQ-9 SCORE") + " (" + LASTOBSDATE("PHQ-9 SCORE") + ")" +  HRET +
+
+IF PATIENT_AGE() >= 15 AND PATIENT_AGE() < 66
+THEN "Last HIV screen: " + (IF match(PROB_AFTER("delimited"),"ICD10-B20")>0 
+THEN "Patient is HIV positive. "
+ELSE "HIV screen (" + LASTOBSDATE("HIV AB") + "): " + OBSANY("HIV AB")  + CFMT(LASTOBSDATE("RFSD HIV TST"),""," declined on ","", " ")
+ENDIF)  + "   //   "
+ELSE ""
+ENDIF  +
+
+preventftemp() +
+
+IF DURATIONDAYS("01/01/1945", str(PATIENT.DATEOFBIRTH))>=0 AND DURATIONDAYS(str(PATIENT.DATEOFBIRTH), "12/31/1965")>=0
+THEN "Last Hepatitis C: " + obsany("HEP C AB") 
+ELSE ""
+ENDIF + HRET +
+
+"Last flu:  " + 
+IF DURATIONDAYS(LASTOBSDATE("FLUVAXDECLN"), LASTOBSDATE("FLU VAX")) > 0 OR OBSANY("FLUVAXDECLN") == ""
+THEN "Last flu vaccine: " + OBSANY("FLU VAX") + CFMT(LASTOBSDATE("FLU VAX"),""," (","",")") + HRET
+ELSE CFMT(LASTOBSDATE("FLUVAXDECLN"),"","Last flu vaccine: declined on ","","") + HRET
+ENDIF + 
+"   //   Last tetanus: " + LASTOBSDATE("TD BOOSTER") +  HRET +
+
+"Last pneumovax:  " + LASTOBSDATE("PNEUMOVAX") + "   //   Last PCV13: " + LASTOBSDATE("PCV13#1") + "   //   Last zostavax: " + LASTOBSDATE("ZOSTAVAX") +  HRET +
+"Last FIT/iFOB:  " + obsany("IFOBT") + " ("+ LASTOBSDATE("IFOBT") + ")    //   Last colonoscopy: " + obsany("COLONOSCOPY") + " (" + LASTOBSDATE("COLONOSCOPY") + ")    //   Colonoscopy due: " + OBSANY("COLONNXTDUE") + CFMT(LASTOBSDATE("PT DCLN COLN"),""," declined on ","", " ") + CFMT(LASTOBSDATE("COLONRECACT"),""," declined on ","", " ") +  HRET +
+
+IF obsany("SMOK STATUS") <> "" AND obsany("SMOK STATUS") <> "never smoker" AND PATIENT_AGE() >= 65 AND PATIENT_AGE() <= 70
+THEN "AAA Screen:  " + OBSANY("AAASCREENING") + "  (" + LASTOBSDATE("AAASCREENING") + ")" 
+ELSE ""
+ENDIF + HRET +
+
+LungCa() +
+
+IF PATIENT_AGE() >= 55 AND PATIENT_AGE() <= 80 AND val(obsany("SMOK HX TOTA"))>30 AND val(SMOK_YR_COMP)>5475 
+AND DURATIONDAYS(obsany("SMOK YR Q"), str(._TODAYSDATE))>5475
+THEN "Lung Cancer:  High Risk" + "   //   " 
+ELSE "" 
+ENDIF + "Last PSA: " + obsany("PSA")  +  HRET +
+
+IF PATIENT_AGE() > 65
+THEN preventger()
+ELSE ""
+ENDIF
+}
+
+
+
+
+///////////////// ///////////////// ///////////////// ///////////////// ///////////////// /////////////////
+
+
+
+
+
+||||||||||||||||||||||||||||||||||||||||||
+|||||||||||                    |||||||||||
+||||||||||| PREVENT F TEMPLATE |||||||||||
+|||||||||||                    |||||||||||
+||||||||||||||||||||||||||||||||||||||||||
+
+
+.preventf
+/*Last BP: 120/80 (09/13/2017)   //   Glaucoma screen:
+Last lipid:  Cholesterol: 280   //   HDL: 35   //   LDL:  175   //   TG: 4.2 (12/09/2017)
+10-Year ASCVD: 12.5% (no statin)   //   Last diabetes screen: 
+Smoking: current smoker   //   Alcohol:   //   Drug Use:   //   Last PHQ-9: 18 (10/18/2016)
+Last HIV screen: NONREACTIVE (12/01/2016)   //   Last Hepatitis C: NONREACTIVE 
+*/
+
+fn preventftemp(){
+IF PATIENT.SEX == "Female"
+THEN 
+cfmt(template_obs("MAMMOGRAM"),"","Last mammogram: ",""," ("+lastobsdate("MAMMOGRAM")+")      //   ","")
++"Mammo due: " + newDueDate("MAMMO DUE") + HRET
++cfmt(template_obs("BON DEN DEXA"),"","Last DEXA: ",""," ("+lastobsdate("BON DEN DEXA")+")","") + HRET
++cfmt(template_obs("PAP SMEAR"),"","Last Pap: ",""," ("+lastobsdate("PAP SMEAR")+")","")
++cfmt(template_obs("HPV"),"", "   //   Last HPV: ",""," ("+lastobsdate("HPV")+")","")
++"   //   Pap due: " + newDueDate("PAP DUE") + HRET
+ELSE ""
+ENDIF
+}
+
+/*
+Last mammogram: BIRAD-2 (01/01/2017)   //   Mammo due: 01/01/2022   //   Last DEXA: done (01/01/2017)
+Last pap: Abnormal (02/12/2016)   //   Last HPV: not detected (02/12/2016)   //   Pap due: 02/01/2017
+Last flu: 10/17/2017   //   Last tetanus: 05/03/2017
+Last pneumovax: 01/01/2017   //   Last PCV13: 05/01/2016   //   Last zostavax: 07/06/2017
+Last FIT/iFOB: positive (11/1/2016)   //   Last colonoscopy: 01/01/2017   //   Colonoscopy due: 01/01/2027
+AAA Screen:    //   Lung Cancer:    //   Last PSA: 
+ADL: 06/22/2016   //   IADL: 6/22/2016
+MMSE: 28/30 (05/02/2016)   //   Mini-Cog: 5-normal (06/20/2016)
+Balance-Gait Score (Tinetti): Low Risk (04/07/2017)   //   TUG score: Low Risk (04/07/2017)   //   Fall Risk Screen: Low Risk (04/07/2017)
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fn preventftemp(){
+IF PATIENT.SEX == "F"
+THEN 
+cfmt(template_obs("MAMMOGRAM"),"","Last mammogram: ",""," ("+lastobsdate("MAMMOGRAM")+")      //   ","")
++"Mammo due: " + newDueDate("MAMMO DUE") + HRET
++cfmt(template_obs("BON DEN DEXA"),"","Last DEXA: ",""," ("+lastobsdate("BON DEN DEXA")+")","") + HRET
++cfmt(template_obs("PAP SMEAR"),"","Last Pap: ",""," ("+lastobsdate("PAP SMEAR")+")","")
++cfmt(template_obs("HPV"),"", "   //   Last HPV: ",""," ("+lastobsdate("HPV")+")","")
++"   //   Pap due: " + newDueDate("PAP DUE") + HRET
+ELSE ""
+ENDIF
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+/*
+01-18-18:
+_ObsTerm: represents a single obs term, or a caret ^ delimited string of obs terms, or a CCC list_?_obs() function that contains a caret ^ delimited string of obs terms;
+  if using a CCC list_?_obs() function, enclosing the function within quotes is OPTIONAL
+_HighLo: optional argument: to extract the LOWEST number, enter "L" in this position; otherwise, to extract the HIGHEST number, either enter "H" or leave empty (highest will be the default)
+*/
+
+fn ccc_Get_Max_ObsVal(_ObsTerm,_HighLo)
+{
+local ObsTerm,ObsGF,HighLo,CompareSymbol,MaxNum,MaxNumDate,ct,ct1,obs,LOBSgf,RowGF,ObsVal,ObsDate
+
+ObsTerm=copy(_ObsTerm)
+if match(tolower(ObsTerm),"list_")>0 and match(tolower(ObsTerm),"_obs()")>0 then ObsTerm=eval(ObsTerm) endif
+ObsGF=getfield(ObsTerm,"^","")
+HighLo=if ok(_HighLo) then toupper(_HighLo) else "" endif
+if HighLo<>"" then HighLo=sub(HighLo,1,1) else HighLo="H" endif
+CompareSymbol=if HighLo="H" then ">" else "<" endif
+MaxNum=""
+MaxNumDate=""
+
+for ct=1, ct<=size(ObsGF), ct=ct+1 do
+  obs=ObsGF[ct]
+  LOBSgf=getfield(list_obs(obs,"pencil","delimited","value"),"|","")
+  for ct1=1, ct1<=size(LOBSgf), ct1=ct1+1 do
+    RowGF=getfield(LOBSgf[ct1],"^","")
+    if size(RowGF)<2 then continue endif
+    ObsVal=ccc_extract_num_(RowGF[1])
+    ObsDate=str(RowGF[2])
+    if MaxNum="" then
+      MaxNum=ObsVal
+      MaxNumDate=ObsDate
+    else
+      if eval(str(ObsVal,CompareSymbol,MaxNum))=TRUE then
+        MaxNum=ObsVal
+        MaxNumDate=ObsDate
+      endif
+    endif
+  endfor
+endfor
+if MaxNum="" then return "" endif
+return str(MaxNum," (",MaxNumDate,")")
+}
+
+
+
+/*
+
+EXAMPLE CALLS:
+
+// returns lowest systolic BP
+{ccc_Get_Max_ObsVal("List_BP_systolic_obs()","L")}
+{ccc_Get_Max_ObsVal(List_BP_systolic_obs(),"L")}
+{ccc_Get_Max_ObsVal("BP Systolic","L")}
+
+// returns highest systolic BP
+{ccc_Get_Max_ObsVal("List_BP_systolic_obs()","H")}
+{ccc_Get_Max_ObsVal(List_BP_systolic_obs(),"H")}
+{ccc_Get_Max_ObsVal("List_BP_systolic_obs()")}
+{ccc_Get_Max_ObsVal(List_BP_systolic_obs())}
+{ccc_Get_Max_ObsVal("BP Systolic","H")}
+{ccc_Get_Max_ObsVal("BP Systolic")}
+
+*/

@@ -1,0 +1,99 @@
+////  HISTORICAL COPIES OF FNs AS SEPARATE FNs  ////
+// as of 07.02.2018 still getting stuck in infinite loop for >1 prblem in pt probList
+// >> therefore merging into one fn and using only Z00 codes
+
+
+
+fn orderAdd(){
+
+orderOnce_test("S", "In House Labs", "Rapid Drug Screen (Urine Tox)", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-G0477","COCAINE UR","UTOX CTRL7")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "UA dip stick - completed by MA", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-81000","UA COLOR")
+
+orderOnce_test("S", "In House Procedures", "Wet Mount/KOH", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-87210","WET MOUNT")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin A1C - completed by MA", "", get(autoAddDx("E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),1), get(autoAddDx("E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),2), "", "", "", "", "","CPT-83036","HGBA1C")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Blood Sugar - completed by MA", "", get(autoAddDx("E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),1), get(autoAddDx("E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),2), "", "", "", "", "","CPT-82947","BG FINGER")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin - completed by MA", "", get(autoAddDx("D5^D6^E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),1), get(autoAddDx("D5^D6^E66^O99.21^E23.2^R73^E11^E10^O24^Z00"),2), "", "", "", "", "","CPT-85018","HGB")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Pregnancy Test - Urine - completed by MA", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-81025","HCG PREG UR","UCG INT CONT")
+
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-85610","PT PATIENT","PTINRCTRL")
+
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-85610","INR","PTINRCTRL")
+
+orderOnce_test("S", "In House Labs", "Rapid Strep", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-87430","RAPID STREP")
+
+orderOnce_test("S", "In House Labs", "Rapid HIV (oral)", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-86703","HIVRAPIDRSLT")
+
+orderOnce_test("S", "In House Labs", "Rapid Influenza", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-87804","RAPIDFLUTST")
+
+orderOnce_test("S", "In House Labs", "PPD placement (v74.1)", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "", "","CPT-86580","TB-PPD")
+
+orderOnce_test("S", "In House Labs", "iFOB (immunochemical fecal occult blood)", "", get(autoAddDx("Z00"),1), get(autoAddDx("Z00"),2), "", "", "", "","","CPT-82274","IFOBT","IFOBCTRL")
+}
+
+
+
+fn autoAddDx(_Dxs){
+local probList, probLine, parts, dxC, dxD, autoAddDx,probSz,Dxs,dxCtemp,dxDtemp,pC,pD
+
+Dxs = copy(_Dxs)
+probList = getfield(PROB_AFTER("list"),"\r","")
+userok("Full problem list: "+HRET+str(probList))
+probSz = size(probList)
+userok("# problems in Problem List: "+str(probSz))
+dxC=array()
+userok("size of empty dxC: "+size(dxC))
+dxD=array()
+userok("size of empty dxD: "+size(dxD))
+pD=0
+pC=0
+
+for j=1, j<=probSz, j=j+1 do
+	userok("iteration: "+str(j))
+	probLine = get(probList,j)
+	userok("Checking problem: "+HRET+str(probLine))
+	
+	if matchany(probLine,Dxs)<>"" then
+		parts = getfield(probLine,"(",")")
+			userok("variable <parts>: "+str(parts,","))
+			userok("# elements in <parts>: "+str(size(parts)))
+		dxDtemp=get(parts,1)
+		pD = eval(pD+1)
+			userok("pD: "+str(pD))
+		dxD = insert(dxD,pD,dxDtemp) /**sub(dxDtemp,2,size(dxDtemp)-1))**/
+			userok("Dx description: "+str(dxD," | "))
+		dxCtemp=get(parts,size(parts))
+		pC = eval(pC+1)
+			userok("pC: "+str(pC))
+		dxC = insert(dxC,pC,dxCtemp)
+			userok(str("Dx code: "+str(dxC," | ")))
+	else j=j+1 
+	endif
+	
+endfor
+
+if size(dxC)<>0 then "" else 
+	    userok("Patient age: "+str(patient_age()))
+	    COND
+	    CASE PATIENT_AGE()>=18
+		 dxC = "Z00.00"
+		 dxD = "Adult Preventive Care"
+	    CASE (PATIENT_AGE()<18 AND PATIENT_AGE()>=12)
+		 dxC = "Z00.3"
+		 dxD = "Adolescent Well Check"
+	    CASE PATIENT_AGE()<12
+		 dxC = "Z00.129"
+		 dxD = "Well Child Check"
+	    ENDCOND
+		userok("Dx description: "+dxD+HRET+"Dx code: "+dxC)
+endif
+
+autoAddDx = array(str(dxC,"|"),str(dxD,"|"))
+
+return autoAddDx
+
+}

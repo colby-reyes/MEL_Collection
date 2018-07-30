@@ -1,0 +1,27 @@
+
+// function to use:
+fn ccmAddMinutes(_time){
+local x=copy(_time)
+if ins_name()=="Medicare Clinic" and obsnow("DURATION")=="" then obsnow("DURATION",str(x)) else "" endif
+}
+
+
+// forms to edit:
+
+  ------> DONE - Phone Note (10m)  
+
+  ------> DONE - Lab Letter Request (10m)
+
+  ------> DONE - Nurse Form Manager (15m)
+
+  ------> DONE - eRx Refill (form components template) (1m)
+
+  ------> DONE - Initial HRA/Risk Re-Assessment (10m)
+
+  ------> DONE - Adult CRA (20m)
+
+  ------> DONE - Care Plan (20m)
+
+  ------> DONE - Referral Management (12m)
+
+  ------> DONE - PHI Request? (8m)

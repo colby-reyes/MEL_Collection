@@ -1,0 +1,74 @@
+
+fn userchoice(message, responses, title, options)
+{
+local p,path,SysPath
+
+/* 09-08-17;
+   09-12-17: changed to ccc_net_path() */
+SysPath=if _ccc_System_path<>"" then str(_ccc_System_path) else ccc_net_path() endif
+
+p="" // parameter string
+if message=="" or responses=="" then return "" endif
+p="\"" + message + "\" \"" + responses + "\""
+if OK(title) then p=p+" \""+title+"\"" endif
+if OK(options) then p=p+" \""+options+"\"" endif
+
+/* 03-06-15: defined in usrlib.txt; default is still dir_emr() */
+path=if ok(_ccc_UserCheck_path) then _ccc_UserCheck_path else "" endif
+if path="" then path=SysPath endif
+path=str(path,"\\UserChoice.exe")
+
+return runtextprocess(path, p)
+}
+
+
+
+
+
+
+fn usercheckd(message, responses, title, delimiter)
+{
+local p="" // parameter string
+if message=="" or responses=="" then return "" endif
+p="\"" + message + "\" \"" + responses + "\""
+if OK(title) then p=p+" \""+title+"\"" endif
+if OK(delimiter) then p=p+" \""+delimiter+"\"" endif
+p=runtextprocess("UserCheck.exe", p)
+return p
+}
+
+
+
+
+/* These versions refresh the document space after the popup closes. They should be used only in open updates */
+fn userchoicer(message, responses, title, options)
+{
+local p="" // parameter string
+if message=="" or responses=="" then return "" endif
+p="\"" + message + "\" \"" + responses + "\""
+if OK(title) then p=p+" \""+title+"\"" endif
+if OK(options) then p=p+" \""+options+"\"" endif
+p=runtextprocess("UserChoice.exe", p)
+add_text_comp("Enterprise\CCC\System","Refresh")
+return p
+}
+
+
+
+
+fn usercheckr(message, responses, title, delimiter)
+{
+local p="" // parameter string
+if message=="" or responses=="" then return "" endif
+p="\"" + message + "\" \"" + responses + "\""
+if OK(title) then p=p+" \""+title+"\"" endif
+if OK(delimiter) then p=p+" \""+delimiter+"\"" endif
+p=runtextprocess("UserCheck.exe", p)
+add_text_comp("Enterprise\CCC\System","Refresh")
+return p
+}
+
+
+
+
+fn CCC_Refresh() {add_text_comp("Enterprise\CCC\System","Refresh")}

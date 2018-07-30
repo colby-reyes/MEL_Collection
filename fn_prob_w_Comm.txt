@@ -1,0 +1,35 @@
+
+
+fn prob_w_comm(_status){
+
+local pLstGF,pCurr,NewAry,pDescr,pComm,stat,sz,pStat
+
+if ok(_status) then stat=toupper(get(_status,1)) else stat="" endif
+pLstGF=getfield(prob_list_changes("delimited"),"|","")
+sz=size(pLstGF)
+
+NewAry=array()
+
+for ct=1, ct<=size(pLstGF), ct=ct+1 do
+userok("Ct = " + str(ct))
+    pCurr=getfield(pLstGF[ct],"^","")
+userok(str(pCurr,"\n"))
+    pStat=get(pCurr[14],1)
+userok("stat: "+str(stat)+hret+"status: "+str(pStat))
+    if match(str(stat),str(pStat,1))>0 then userok("match!! skipping to next") else 
+	userok("resetting pStat...")
+	    if match(str(pStat),"U") then pStat=str("  **UNSIGNED") else 
+	       if match(str(pStat),"S") then pStat=str(" - (signed)") endif 
+	    endif
+	useok("updated status: "+str(pStat))
+	    pDescr=str(pCurr[3]+" ("+pCurr[17]+") "+pStat)
+	    pComm=str(pCurr[15])
+
+	    NewAry[size(NewAry)+1]=str(pDescr+HRET+pComm)
+	userok("current array: "+hret+str(NewAry,"\n"))
+    endif
+endfor
+
+if size(NewAry)==0 then return "" else return str(NewAry,"\r\n","","\r\n") endif
+}
+

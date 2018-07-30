@@ -1,0 +1,27 @@
+||||||||||||||||||||||||||||||||||||||||
+|||||||||||                  |||||||||||
+||||||||||| fn cardio_risk() |||||||||||
+|||||||||||                  |||||||||||
+||||||||||||||||||||||||||||||||||||||||
+
+
+
+
+fn cardio_risk(){
+// ***fn should be used with cvRisk() 
+// fn prevents erroring out due to missing ControlPanel variable when cvRisk() is 
+//	used in doc w/o ControlPanel  >>  gives reason ASCVD cannot be calculated
+// fn calls cvRisk() to calculate and display most recent 10-year ASCVD score and 
+//	highest 10-year ASCVD score
+
+
+if gCM_PROB_ASCVD<>"" AND  gCM_LDL_Obs<>"" AND gCM_PROB_DMDx<>""
+
+then "10-Year ASCVD Risk (last): "+cfmt(cvRisk(),"","","",obsUpdate("CVRISK10","TRIGLYCERIDE") + "   //   ","") + 
+cfmt(ccc_Get_Max_ObsVal("CVRISK10","H"),"","10-Year ASCVD Risk (highest): ","","","") + HRET
+
+else str("Could not calculate ASCVD. Please add Control Panel Form") +
+cfmt(obsany("CVRISK10"),"","  //  Last signed ASCVD score: ",""," << Note: old risk score may not be accurate","") + HRET
+
+endif
+}

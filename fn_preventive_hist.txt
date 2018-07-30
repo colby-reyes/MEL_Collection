@@ -1,0 +1,67 @@
+||||||||||||||||||||||||||||||||||||||||
+|||||||||||                  |||||||||||
+||||||||||| declination fxns |||||||||||
+|||||||||||                  |||||||||||
+||||||||||||||||||||||||||||||||||||||||
+
+
+vax_hist(_vaxObs,_declnObs,_vaxName){
+// fn displays most recent specified vaccine or declination
+// *if most recent is a declination, also displays last recorded vax
+	// _vaxObs = obs term in which vax admin is recorded (e.g. "FLU VAX")
+	// _declnObs = obs term in which vax declination is recorded (e.g. "FLUVAXDECLN")
+	// _vaxName = name in quotations of vaccine to display history for (e.g. "Flu")
+
+local obs,declnObs,vaxName
+
+vaxObs = copy(_vaxObs)
+declnObs = copy(_declnObs)
+vaxName = copy(_vaxName)
+
+IF 
+DURATIONDAYS(LASTOBSDATE(declnObs), LASTOBSDATE(vaxObs)) > 0 OR OBSANY(declnObs) == ""
+
+THEN 
+CFMT(template_obs(vaxObs),"","Last "+ str(vaxName) +" vaccine: " ,"", cfmt(LASTOBSDATE(vaxObs),""," (","",")"),"")
+
+ELSE 
+CFMT(LASTOBSDATE(declnObs),"",str(vaxName) +" vaccine declined on ","","") + cfmt(lastobsdate(vaxObs),"","  //  Last " + str(vaxName) + "vaccine before declination: ","","")
+
+ENDIF 
+}
+
+
+
+
+
+
+
+fn preventive_hist(_Obs,_declnObs,_Name){
+// this fn contains more comprehensive list of declinations (all declinations relative to preventive services)
+// functions identically to vax_hist(*,*,*) except will require _Name instead of _vaxName (e.g. "Flu vaccine" instead of "Flu")
+// fn displays most recent specified preventive service or preventive service declination
+// *if most recent is a declination, also displays last recorded vax
+	// _Obs = obs term in which preventive service is recorded (e.g. "COLONOSCOPY")
+	// _declnObs = obs term in which declination is recorded (e.g. "COLONDECLN")
+	// _Name = name in quotations of preventive service to display history for(e.g. "Colon cancer screen)
+
+local obs,declnObs,vaxName
+
+vaxObs = copy(_vaxObs)
+declnObs = copy(_declnObs)
+vaxName = copy(_vaxName)
+
+IF 
+DURATIONDAYS(LASTOBSDATE(declnObs), LASTOBSDATE(vaxObs)) > 0 OR OBSANY(declnObs) == ""
+
+THEN 
+CFMT(template_obs(vaxObs),"","Last "+ str(vaxName) +" vaccine: " ,"", cfmt(LASTOBSDATE(vaxObs),""," (","",")"),"")
+
+ELSE 
+CFMT(LASTOBSDATE(declnObs),"",str(vaxName) +" vaccine declined on ","","") + cfmt(lastobsdate(vaxObs),"","  //  Last " + str(vaxName) + "vaccine before declination: ","","")
+
+ENDIF 
+}
+
+
+

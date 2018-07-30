@@ -1,0 +1,46 @@
+
+Original fn by Dan Moore-06.22.2018
+adapted to fn setOnce() by Colby Reyes-06.22.2018
+// On update: populate obs from document variables and set obs date to Enrollment Status Date
+!{
+
+//When EnrollmentStatusDate is present and any obs value has changed:
+if DOCUMENT.STATUSDATE <> "" then
+
+	// 1. CLEANUP: clear observations that were already stored by this form (use old date field)
+	OBSNOW("STATUS","",DOCUMENT.STATUSDATE_OLD+" 1:00:00 PM")
+
+	// 2. STORE: populate observations with current field values (use current date field)
+	OBSNOW("STATUS",DOCUMENT.ENROLLSTATUS,DOCUMENT.STATUSDATE+" 1:00:00 PM")
+
+	// 3. BACKUP: copy current date field to old date field, for future cleanup
+	DOCUMENT.STATUSDATE_OLD = DOCUMENT.STATUSDATE
+
+endif
+
+/* 
+1. clear obsVALUE1(DATE_OLD)
+2. set obsVALUE1 to strVALUE1(DATE)
+3. set DATE_OLD to DATE
+
+-- note that all dates use *1 PM* as the obs time.
+*/
+}
+
+
+
+fn setOnce(_dt,_dtOld,_trig,_obs){
+
+local dt,dtOld,trig,obs
+
+dt=copy(_dt) // <document variable for date field that obsnow will use; fn "cleans up" this var
+dtOld=copy(_dtOld) // <document variable for temporary storage
+trig=copy(_trig) // <document variable that will write to value of obsnow
+obs=copy(_obs) // <obs term that obsnow will write to
+
+if dt <> "" then
+	OBSNOW(str(obs),"",dtOld+" 1:00:00 PM")
+	OBSNOW(str(obs),trig,dt+" 1:00:00 PM")
+	dtOld = dt
+endif
+}

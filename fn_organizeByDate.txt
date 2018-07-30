@@ -1,0 +1,115 @@
+
+
+
+fn organizeByDate(_obs,_titles,_maxNumRet){
+local lreturn,txtAry,obsAry,pap,hpv,geno,cerv,thisRowAry,nextRowAry,txtLines,thisLine,numEl,fxnReturn
+local x = 1
+numEl=copy(_maxNumRet)
+//<------ Arys for retrieving values ------>//
+txtAry = array()
+valDateAry = array()
+obsAry = getfield(_obs,"^","")
+//userok("Obs list: "+HRET+str(obsAry,"\n"))
+//<---------------------------------------->//
+
+
+//<------ Preceding Text ------>//
+txtLBL = getfield(_titles,"^","")
+//userok("Header list: "+HRET+str(txtLBL,"\n"))
+//<---------------------------->//
+
+
+//<------------- START: Arys for arranging values --------------->//
+for i=1,i<=size(obsAry),i=i+1 do
+//userok("Starting i="+i)
+	if obsany(str(obsAry[i]))<>""
+	then txtLines = getfield(list_obs(str(obsAry[i]),"Pencil","delimited","VALUE"),"|","")
+	//userok("size of txtLines: "+size(txtLines))
+	//userok(txtLBL[i]+obsAry[i]+HRET+str(txtLines,"\n"))
+	//userok(cfmt(txtLines[1],"",obsAry[i]+"[1]","")+HRET+cfmt(txtLines[2],"",obsAry[i]+"[2]: ",""))
+
+	local sz= if size(txtLines)<numEl then size(txtLines) else numEl endif	// sz is the number of elements to return for each obs (sz=3 lists 3 most recent values/dates)
+	//userok("j will go up to: "+sz)
+	for j=1,j<=sz,j=j+1 do
+		//userok("starting j="+j)
+		thisRowAry=getfield(txtLines[j],"^","")
+		thisRowAry[1]=str(txtLBL[i]+thisRowAry[1])
+		thisLine=array(thisRowAry[1],thisRowAry[2])
+		//userok("thisLine: "+str(thisLine,"   //   "))
+		//userok("thisRowAry w. title: "+str(thisRowAry,"  //  ")+HRET+"--Will be insterted into position: "+x)
+		insert(valDateAry,x,thisLine)
+		//userok("ValDateAry at Iteration (i: "+str(i)+"; j: "+str(j)+")"+HRET+"------------------------------------------------"+HRET+HRET+str(valDateAry,"\n"))
+		x=x+1
+	// <> loop through and add new line of array([date],header: obs1,header2: obs2,...) <> //
+	//	> new lines created in or after "for" loop? >> check Dan's code
+	//  > afterwards will return str(array([date],obs1,obs2,...),"   //   ")
+	endfor
+//userok("Ending i="+i)
+	else "" //userok(str(obsAry[i])+" is empty") 
+	endif
+endfor
+
+//userok("!!! STARTING DATE COMPARISON AND REARRANGEMENT !!!")
+numIt=size(valDateAry)
+
+for k=1,k<=numIt-1,k=k+1 do	
+//userok("Starting k="+k)
+local valDt1,valDt2,ct,dt1,dt2
+
+ct=k+1
+
+
+while ct<numIt do
+
+valDt1=get(valDateAry,k)
+valDt2=get(valDateAry,ct)
+//userok(str("k = "+k+HRET+"valDateAry[k] = "+str(valDateAry[k]))+HRET+HRET+str("ct = "+ct+HRET+"valDateAry[ct] = "+str(valDateAry[ct])))
+if ok(valDt2) then 
+dt1=get(valDt1,2)
+dt2=get(valDt2,2)
+
+	if  match(str(dt1),str(dt2))>0 then
+			//userok(str("Date match!"+HRET+"***Removing: "+str(valDateAry[ct])+HRET+"++++Adding    // "+valDt2[1]+" to "+valDt1[1]))
+			//userok("valDateAry before move: "+HRET+str(valDateAry,"\n"))
+		//valDateAry[m]=emptyAry
+		valDt1[1]=str(valDt1[1]+"^"+valDt2[1])
+		valDateAry[k]=valDt1
+		remove(valDateAry,ct,1)
+			//userok("valDateAry after move: "+HRET+str(valDateAry,"\n"))
+	
+	else			
+		if  DURATIONDAYS(str(dt1),str(dt2))>0 then
+			//userok(str("k ("+dt1+") is  older than  ct ("+dt2+")"))
+			//userok("putting valDt1 into array element "+str(ct+1))
+			set(valDateAry,ct+1,valDt1) 
+			//userok("size of valDateAry: "+size(valDateAry))
+			remove(valDateAry,k,1)
+			//userok("size of valDateAry: "+size(valDateAry))
+		else ct=ct+1
+			 //userok(str("ct+1 ("+dt2+") is  older than  ct  ("+dt1+")....left in current order"))
+		endif
+	endif
+
+else ct=ct+1 endif
+endwhile
+
+//userok("End of iteration "+k+HRET+"-------------------------------"+HRET+"valDateAry on iteration ("+str(k)+"): "+HRET+str(valDateAry,"\n"))
+endfor
+//<--------------- END: Arys for arranging values ----------------->//
+
+
+//userok("START: build text")
+//<--------------- START: build text ----------------->//
+for j=1,j<=size(valDateAry),j=j+1 do
+local retAry=get(valDateAry,j)
+	if ok(retAry) then txtAry[j]=str("["+retAry[2]+"] "+str(getfield(retAry[1],"^",""),"  //  ")) else "" endif
+	//userok("Size of txtAry: "+size(txtAry)+HRET+"txtAry on iteration ("+str(j)+"): "+HRET+str(txtAry,"\n"))
+endfor
+
+
+fxnReturn = (str(txtAry,"\n"))
+
+//<--------------- END: build text ----------------->//
+
+return fxnReturn
+}

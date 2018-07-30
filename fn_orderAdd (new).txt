@@ -1,0 +1,51 @@
+
+///// >> 07.02.2018 >> merging into one fn and using only Z00 codes /////
+
+
+
+fn orderAdd(){
+
+COND
+CASE PATIENT_AGE()>=18
+	dxC = "Z00.00"
+	dxD = "Adult Preventive Care"
+CASE (PATIENT_AGE()<18 AND PATIENT_AGE()>=12)
+	dxC = "Z00.3"
+	dxD = "Adolescent Well Check"
+CASE PATIENT_AGE()<12
+	dxC = "Z00.129"
+	dxD = "Well Child Check"
+ENDCOND
+userok("Dx description: "+dxD+HRET+"Dx code: "+dxC)
+
+
+orderOnce_test("S", "In House Labs", "Rapid Drug Screen (Urine Tox)", "", str(dxC), str(dxD), "", "", "", "", "","CPT-G0477","COCAINE UR","UTOX CTRL7")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "UA dip stick - completed by MA", "", str(dxC), str(dxD), "", "","", "", "","CPT-81000","UA COLOR")
+
+orderOnce_test("S", "In House Procedures", "Wet Mount/KOH", "", str(dxC), str(dxD), "", "", "", "", "","CPT-87210","WET MOUNT")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin A1C - completed by MA", "", str(dxC), str(dxD), "", "", "", "", "","CPT-83036","HGBA1C")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Blood Sugar - completed by MA", "", str(dxC), str(dxD), "", "", "", "", "","CPT-82947","BG FINGER")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin - completed by MA", "", str(dxC), str(dxD), "", "", "", "", "","CPT-85018","HGB")
+
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Pregnancy Test - Urine - completed by MA", "", str(dxC), str(dxD), "", "", "", "", "","CPT-81025","HCG PREG UR","UCG INT CONT")
+
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", str(dxC), str(dxD), "", "", "", "", "","CPT-85610","PT PATIENT","PTINRCTRL")
+
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", str(dxC), str(dxD), "", "", "", "", "","CPT-85610","INR","PTINRCTRL")
+
+orderOnce_test("S", "In House Labs", "Rapid Strep", "", str(dxC), str(dxD), "", "", "", "", "","CPT-87430","RAPID STREP")
+
+orderOnce_test("S", "In House Labs", "Rapid HIV (oral)", "", str(dxC), str(dxD), "", "", "", "", "","CPT-86703","HIVRAPIDRSLT")
+
+orderOnce_test("S", "In House Labs", "Rapid Influenza", "", str(dxC), str(dxD), "", "", "", "", "","CPT-87804","RAPIDFLUTST")
+
+orderOnce_test("S", "In House Labs", "PPD placement (v74.1)", "", str(dxC), str(dxD), "", "", "", "", "","CPT-86580","TB-PPD")
+
+orderOnce_test("S", "In House Labs", "iFOB (immunochemical fecal occult blood)", "", str(dxC), str(dxD), "", "", "","","","CPT-82274","IFOBT","IFOBCTRL")
+
+}
+

@@ -1,0 +1,159 @@
+
+/////////////////////////////////////////////////////////////////////////////////////
+////////////////////						 ////////////////////
+////////////////////  functions for MCH Prenatal Risk Screening  ////////////////////
+////////////////////						 ////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+/////////////////////////////
+//////		       //////  
+//////  fn preg12mo()  //////
+//////		       //////  
+/////////////////////////////
+
+
+fn preg12mo(){
+// fn checks if pt has been pregnant in the past 12 months (i.e. delivered a baby in the last 12mo)
+// fn checks all delivery date obs checking time between today and delivery date recorded until it 
+//    comes to an empty value
+// fn returns "Yes" and most recent del. dt if within 12mo; otherwise returns ""
+
+local delDates,sz,delDt,dt,lreturn
+
+delDates = array("DELDATE 1", "DELDATE 2", "DELDATE 3", "DELDATE 4", "DELDATE 5", "DELDATE 6", "PRG#7DELV DT", "PRG#8DELV DT", "PRG#9DELV DT", "PRG#10DELVDT", "PRG#11DELVDT", "PRG#12DELVDT", "PRG#13DELVDT", "PRG#14DELVDT", "PRG#15DELVDT", "PRG#16DELVDT", "PRG#17DELVDT", "PRG#18DELVDT")
+
+sz=size(delDates)
+//userok("Number of Delivery date obs: "+str(sz))
+
+for i=1,i<=sz,i=i+1 do
+
+	delDt=get(delDates,i)
+	if obsany(delDt)<>"" then
+	//userok("Checking Delivery Date #"+str(i))
+		dt = obsany(delDt)
+		lreturn = if DURATIONDAYS(str(dt),str(._todaysdate))<365 then ("Yes:  "+str(dt)) 
+		          else ("No:  "+str(dt)) endif
+		//userok(str(lreturn))
+	else "" //userok("Del. Dt. #"+str(i)+" EMPTY")""
+	endif
+endfor
+return lreturn
+}
+
+
+
+
+/////////////////////////////
+//////		       //////  
+//////  fn gaCmpwks()  //////
+//////		       //////  
+/////////////////////////////
+
+
+fn gaCmpwks(_wks,_sym){
+// fn checks for completed pregnancy w. gestational age matching criteria set in arguments _wks and _sym
+//    (e.g. checks for gest. age < 36wks when called as gaCmpwks("36","<")
+// 05.07.2018: updated to include "deltype" to exclude SAB or EAB
+	// _wks = gestational age in weeks to compare against
+	// _sym = comparison symbol in quotes (i.e. "<" or ">")
+
+local sym,wks,gestAges,delType,sz,gaObs,ga,lreturn
+
+wks = copy(_wks)
+sym=copy(_sym)
+
+gestAges = array("PREPREG GA 1", "PREPREG GA 2", "PREPREG GA 3", "PREPREG GA 4", "PREPREG GA 5", "PREPREG GA 6", "PRG#7GESTAGE", "PRG#8GESTAGE", "PRG#9GESTAGE", "PRG#10GESTAG", "PRG#11GESTAG", "PRG#12GESTAG", "PRG#13GESTAG", "PRG#14GESTAG", "PRG#15GESTAG", "PRG#16GESTAG", "PRG#17GESTAG", "PRG#18GESTAG")
+
+delType=array("DELTYPE 1","DELTYPE 2","DELTYPE 3","DELTYPE 4","DELTYPE 5","DELTYPE 6","PRG#7DELV TP","PRG#8DELV TP","PRG#9DELV TP","PRG#10DELVTP","PRG#11DELVTP","PRG#12DELVTP")
+
+
+sz=size(gestAges)
+//userok("Number of Gestational Age obs: "+str(sz))
+lreturn=""
+
+for i=1,i<=sz,i=i+1 do
+
+	gaObs=get(gestAges,i)
+	if obsany(gaObs)<>"" then
+	//userok("Checking GA for Preg. #"+str(i))
+		ga = obsany(gaObs)
+		lreturn = if eval(ga+sym+wks)=="TRUE" then 
+				if matchany(obsany(str(delType[i])),"EAB^SAB")=="" then ("Yes:  Preg. #"+str(i)+": "+str(ga)+"wks") else "" endif
+		          else "" endif
+		//userok(str(lreturn))
+	else ""//userok("Gest. Age #"+str(i)+" EMPTY")""
+	endif
+endfor
+return lreturn
+}
+
+
+
+/////////////////////////////
+//////		       //////  
+//////  fn  fetalBW()  //////
+//////		       //////  
+/////////////////////////////
+
+
+fn fetalBW(_weight,_sym){
+
+local sym,weight,wt,sz,weights,wtObs,lreturn
+
+weight = copy(_weight)
+sym=copy(_sym)
+
+weights = array("FETALBW 1", "FETALBW 2", "FETALBW 3", "FETALBW 4", "FETALBW 5", "FETALBW 6", "PRG#7FTBRTHW", "PRG#8FTBRTHW", "PRG#9FTBRTHW", "PRG#10FBRTHW", "PRG#11FBRTHW", "PRG#12FBRTHW", "PRG#13FBRTHW", "PRG#14FBRTHW", "PRG#15FBRTHW", "PRG#16FBRTHW", "PRG#17FBRTHW", "PRG#18FBRTHW")
+
+sz=size(weights)
+userok("Number of Fetal BW obs: "+str(sz))
+lreturn=""
+
+for i=1,i<=sz,i=i+1 do
+
+	wtObs=get(weights,i)
+	if obsany(wtObs)<>"" then
+	userok("Checking Fetal BW for Preg. #"+str(i))
+		wt = obsany(wtObs)
+		lreturn = if eval(wt+sym+weight)=="TRUE" then ("Yes:  Preg. #"+str(i)+": "+str(wt)+"oz") 
+		          else "" endif
+	else userok("Fetal BW for Preg. #"+str(i)+" EMPTY")""
+	endif
+endfor
+return lreturn
+}
+
+
+
+/////////////////////////////
+//////		       //////  
+//////  Del Type Disp  //////
+//////		       //////  
+/////////////////////////////
+
+{CFMT(obsany("DELTYPE 1"),"","",""," ("+lastobsdate("DELTYPE 1")+")"+HRET,"")}{CFMT(obsany("DELTYPE 2"),"","",""," ("+lastobsdate("DELTYPE 2")+")"+HRET,"")}{CFMT(obsany("DELTYPE 3"),"","",""," ("+lastobsdate("DELTYPE 3")+")"+HRET,"")}{CFMT(obsany("DELTYPE 4"),"","",""," ("+lastobsdate("DELTYPE 4")+")"+HRET,"")}{CFMT(obsany("DELTYPE 5"),"","",""," ("+lastobsdate("DELTYPE 5")+")"+HRET,"")}{CFMT(obsany("DELTYPE 6"),"","",""," ("+lastobsdate("DELTYPE 6")+")"+HRET,"")}{CFMT(obsany("PRG#7DELV TP"),"","",""," ("+lastobsdate("PRG#7DELV TP")+")"+HRET,"")}{CFMT(obsany("PRG#8DELV TP"),"","",""," ("+lastobsdate("PRG#8DELV TP")+")"+HRET,"")}{CFMT(obsany("PRG#9DELV TP"),"","",""," ("+lastobsdate("PRG#9DELV TP")+")"+HRET,"")}{CFMT(obsany("PRG#10DELVTP"),"","",""," ("+lastobsdate("PRG#10DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#11DELVTP"),"","",""," ("+lastobsdate("PRG#11DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#12DELVTP"),"","",""," ("+lastobsdate("PRG#12DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#13DELVTP"),"","",""," ("+lastobsdate("PRG#13DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#14DELVTP"),"","",""," ("+lastobsdate("PRG#14DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#15DELVTP"),"","",""," ("+lastobsdate("PRG#15DELVTP")+")"+HRET,"")}
+{CFMT(obsany("PRG#16DELVTP"),"","",""," ("+lastobsdate("PRG#16DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#17DELVTP"),"","",""," ("+lastobsdate("PRG#17DELVTP")+")"+HRET,"")}{CFMT(obsany("PRG#18DELVTP"),"","",""," ("+lastobsdate("PRG#18DELVTP")+")"+HRET,"")}
+
+
+
+
+Amoxicillin 500mg, 2 tablets 2x/day x 14 days, 
+Clarithromycin 500mg, 1 tablet 2x/day x 14 days, and 
+Omeprazole 20mg, 1 tablet 2x/day x 14 days.
+
+
+
+
+
+/////////////////////////////
+//////		       //////  
+//////  SBIRT Display  //////
+//////		       //////  
+/////////////////////////////
+
+
+{if obsany("AUDITQ1")<>"Never" then cfmt(obsany("AUDITQ1"),"","Alcohol use: ","","","") else "" endif}
+{if obsany("NIDA SCORE")<>"Negative" then cfmt(obsany("NIDA SCORE"),"","NIDA: ","","","") else "" endif}

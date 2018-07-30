@@ -1,0 +1,23 @@
+||||||||||||||||||||||||||||||||||||||||
+||||||||||                    ||||||||||
+||||||||||  fn anemia_temp()  ||||||||||
+||||||||||                    ||||||||||
+||||||||||||||||||||||||||||||||||||||||
+
+
+
+fn anemia_temp() {
+// fn uses template_obsTest() to display formatted results of Hb,Fe,Ferritin,TIBC,IF //	antibodies,Transferring,reticulocyte count, and Folate
+
+cfmt(template_obsTest("HGB"),"", "HGB: ", "","   //   ", "")  +
+cfmt(template_obsTest("IRON"),"", "IRON: ", "","   //   " + hret, "")  +
+cfmt(template_obsTest("FERRITIN"),"", "FERRITIN: ", "","   //   ", "")  +
+cfmt(template_obsTest("TIBC"),"", "TIBC: ", "","   //   " + hret, "")  +
+CFMT(template_obsTest("B12"),"","B12: ","","   //   ","") +
+CFMT(template_obsTest("INTR FACT AB"),"","Intrinsic Factor: ","","   //   " + hret,"") +
+CFMT(template_obsTest("FOLATE"),"","FOLATE - SERUM: ","","   //   ","") +
+CFMT(template_obsTest("TRANSFERRIN"),"","TRANSFERRIN: ","","   //   " + hret,"") +
+CFMT(template_obsTest("RETIC COUNT"),"","RETIC COUNT: ","","   //   ","") +
+CFMT(template_obsTest("RBC FOLATE"),"","RBC FOLATE: ","","   //   " + hret,"")
+}
+

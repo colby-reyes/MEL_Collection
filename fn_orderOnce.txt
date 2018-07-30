@@ -1,0 +1,214 @@
+////////////////////////////////////////////////
+///////////////			 ///////////////  
+///////////////  fn orderOnce()  ///////////////  
+///////////////			 ///////////////
+////////////////////////////////////////////////
+
+
+
+
+
+fn orderOnce_test(_mao1,_mao2,_mao3,_mao4,_mao5,_mao6,_mao7,_mao8,_mao9,_mao10,_mao11,_cpt,_trig,_addCond){
+// _mao*#* are the comma-separated components of MEL_ADD_ORDER(....)
+//    e.g. _mao1 is the string "T" or "S" for test/service in MEL_ADD_ORDER("T/S",...) and so on
+//    NOTE: easiest way is to copy the MEL expression and then delete the "MEL_ADD_ORDER(" and the ")"
+//	<<thus, _mao is an abbreviation for MEL_ADD_ORDER
+// _cpt is a carat-delimited list of CPT-codes of the order(s) to check for presence of (not listed in MEL_ADD_ORDER fn)
+// _trig = obs that triggers order placement when a value is present
+// _addCond = obs that must be present w. _trig for order to add (e.g. "internal control visualized" obs)
+
+local order,cpt,cde,ord,s,go,trig,ctrl
+local check = "1"
+
+
+order = if ok(_mao11) then array(copy(_mao1), copy(_mao2), copy(_mao3), copy(_mao4), copy(_mao5), copy(_mao6), copy(_mao7), copy(_mao8), copy(_mao9), copy(_mao10), copy(_mao11)) else userok("Too few arguments")"" endif
+
+//set order indicator to check against to prevent duplicates
+cpt = if ok(_cpt) then getfield(_cpt,"^","") else array(order[3]) endif
+//userok("Number of elements in cpt: "+size(cpt))
+//userok("Elements in cpt: "+HRET+"1: "+cpt[1])
+
+//cde = array(cpt)
+//userok("Number of elements in cde: "+size(cde))
+//userok("Elements in cde: "+HRET+"1: "+cde[1])
+
+//check for trigger obs
+if ok(_trig) 
+then 
+     //userok("Trigger obs required...checking...")""
+     trig = copy(_trig) 
+	if obsnow(trig)<>"" 
+		then 
+			//userok("Trigger obs detected...continuing...")""
+			check="1" 
+		// check for internal control obs
+			if ok(_addCond) 
+			then 
+	   		//userok("Internal control required with obs...checking...")""
+     	    		ctrl = copy(_addCond) 
+	    			if obsnow(ctrl)<>"" 
+					then 
+						//userok("Internal control matched to obs...continuing...")""
+						check="1" 
+					else 
+						userok(str(order[3])+": Internal control MISSING! Cannot add order!")""
+						check="0" 
+					endif 
+			else "" //userok("No internal control necessary...continuing...")""
+			endif
+		else 
+			//userok(str("Trigger obs not detected, add obs for: ",trig))""
+			check="0" 
+		endif 
+     
+
+else 
+     //userok("Trigger obs not needed...continuing...")""
+     check="1" 
+endif
+
+
++ 
+
+
+if check=="0" then "" //userok("Check is FALSE; cannot add order")"" 
+	else
+	//userok("Variable cpt contains: "+str(cpt,",","",""))""
+	s = size(cpt)
+	//userok(str("Number of orders to check against: ",s))""
+		//iterate through cpt codes to check for presence of order in current update
+		go = "1"
+		for i=1, i<=s, i=i+1 do	
+		ord = str(cpt[i])
+		//userok(str("Checking for code: ",ord))""
+			if (match(ORDER_LIST_CHANGES(),str(ord))>0)
+			then go = ""
+			     //userok(str("Order already present; code: ",ord))""
+				//ord = cpt[i+1]
+			else 
+			     //userok(str(ord," not present...moving on..."))""
+			endif
+		endfor
+
+	//add order if cpt is not already present
+	if go<>"" then 
+	//userok("Order being added!!!")""
+	MEL_ADD_ORDER(order[1],order[2],order[3],order[4],order[5],order[6],order[7],order[8],order[9],order[10],order[11])""
+	else //userok("Order not added")""
+	endif
+
+endif""
+
+}
+
+
+
+//  <<>> test steps <<>>  //
+.or1	{orderOnce_test("T", "ID/Micro", "HBsAb (Hepatitis B sAb)","", "ICD10-Z00.00", "Adult preventive care", "", "", "", "salajaji", "")}
+
+.or2	{orderOnce_test("T", "ID/Micro", "HBsAb (Hepatitis B sAb)","", "ICD10-Z00.00", "Adult preventive care", "", "", "", "salajaji", "","CPT-86706^CPT-90471")}
+
+.or3	{orderOnce_test("T", "ID/Micro", "HBsAb (Hepatitis B sAb)","", "ICD10-Z00.00", "Adult preventive care", "", "", "", "salajaji", "","CPT-86706","HDL")}
+.o3	{obsnow("HDL","90")}
+
+.or4	{orderOnce_test("T", "ID/Micro", "HBsAb (Hepatitis B sAb)","", "ICD10-Z00.00", "Adult preventive care", "", "", "", "salajaji", "","CPT-86706","HDL","LDL")}
+.o3 then .o4	{obsnow("LDL","200")}
+
+
+
+
+
+
+____________________________________________________________________________________________________________________
+
+/** HISTORICAL COPY **/
+
+fn orderOnce_test(_mao1,_mao2,_mao3,_mao4,_mao5,_mao6,_mao7,_mao8,_mao9,_mao10,_mao11,_cpt,_trig,_addCond){
+// _mao*#* are the comma-separated components of MEL_ADD_ORDER(....)
+//    e.g. _mao1 is the string "T" or "S" for test/service in MEL_ADD_ORDER("T/S",...) and so on
+//    NOTE: easiest way is to copy the MEL expression and then delete the "MEL_ADD_ORDER(" and the ")"
+//	<<thus, _mao is an abbreviation for MEL_ADD_ORDER
+// _cpt is a carat-delimited list of CPT-codes of the order(s) to check for presence of (not listed in MEL_ADD_ORDER fn)
+
+local order,cpt,cde,ord,s,go,trig,ctrl
+local check = "1"
+
+
+order = if ok(_mao11) then array(copy(_mao1), copy(_mao2), copy(_mao3), copy(_mao4), copy(_mao5), copy(_mao6), copy(_mao7), copy(_mao8), copy(_mao9), copy(_mao10), copy(_mao11)) else userok("Too few arguments")"" endif
+
+//set order indicator to check against to prevent duplicates
+cpt = if ok(_cpt) then getfield(_cpt,"^","") else array(order[3]) endif
+//userok("Number of elements in cpt: "+size(cpt))
+//userok("Elements in cpt: "+HRET+"1: "+cpt[1])
+
+//cde = array(cpt)
+//userok("Number of elements in cde: "+size(cde))
+//userok("Elements in cde: "+HRET+"1: "+cde[1])
+
+//check for trigger obs
+if ok(_trig) 
+then 
+     //userok("Trigger obs required...checking...")""
+     trig = copy(_trig) 
+	if obsnow(trig)<>"" 
+		then 
+			//userok("Trigger obs detected...continuing...")""
+			check="1" 
+		else 
+			//userok(str("Trigger obs not detected, add obs for: ",trig))""
+			check="0" 
+		endif 
+     // check for internal control obs
+	if ok(_addCond) 
+	then 
+	    //userok("Internal control required with obs...checking...")""
+     	    ctrl = copy(_addCond) 
+	    if obsnow(ctrl)<>"" 
+		then 
+			//userok("Internal control matched to obs...continuing...")""
+			check="1" 
+		else 
+			userok(str(order[3])+": Internal control MISSING! Cannot add order!")""
+			check="0" 
+		endif 
+	else "" //userok("No internal control necessary...continuing...")""
+	endif
+
+else 
+     //userok("Trigger obs not needed...continuing...")""
+     check="1" 
+endif
+
+
++ 
+
+
+if check=="0" then "" //userok("Check is FALSE; cannot add order")"" 
+	else
+	//userok("Variable cpt contains: "+str(cpt,",","",""))""
+	s = size(cpt)
+	//userok(str("Number of orders to check against: ",s))""
+		//iterate through cpt codes to check for presence of order in current update
+		go = "1"
+		for i=1, i<=s, i=i+1 do	
+		ord = str(cpt[i])
+		//userok(str("Checking for code: ",ord))""
+			if (match(ORDER_LIST_CHANGES(),str(ord))>0)
+			then go = ""
+			     //userok(str("Order already present; code: ",ord))""
+				//ord = cpt[i+1]
+			else 
+			     //userok(str(ord," not present...moving on..."))""
+			endif
+		endfor
+
+	//add order if cpt is not already present
+	if go<>"" then 
+	//userok("Order being added!!!")""
+	MEL_ADD_ORDER(order[1],order[2],order[3],order[4],order[5],order[6],order[7],order[8],order[9],order[10],order[11])""
+	else //userok("Order not added")""
+	endif
+
+endif""
+
+}

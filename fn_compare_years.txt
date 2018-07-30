@@ -1,0 +1,142 @@
+||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||                      |||||||||||
+|||||||||||  fn compare_years()  |||||||||||
+|||||||||||                      |||||||||||
+||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+
+
+
+fn compare_Years(_OldDate,_NewDate,_chkMo){
+// ***04.30.2018: renamed to X_yearsBefore_Y >> can call either fn name
+//		  _chkMo functionality also updated to fix array call
+
+// fn extracts the year from any formatted date (mm/dd/yyyy or mm/yy) and 
+//    returns the number of years between the two specified dates
+//   *if _chkMo is employed (var is "Y"), then fn returns decimal-formatted fraction 
+//    of years between dates (e.g. "10y 6mo" is returned as "10.5")
+	// _OldDate: older of the two specified dates
+	// _NewDate: most recent of two specified dates
+	//	     *if _OldDate and _NewDate are switched, fn will return negative#
+	// _chkMo:   optional-value of "Y" or "yes" will activate functionality
+
+global OldDate = copy(_OldDate)
+if OldDate <> "" 
+then
+global NewDate = if ok(_NewDate) then copy(_NewDate) else str(._todaysdate) endif
+ 
+
+NewDate = getfield(NewDate, "/","")
+OldDate = getfield(OldDate, "/","")
+
+global NewYear = sub(NewDate,size(NewDate),1)
+global OldYear = sub(OldDate,size(OldDate),1)
+
+global op = "-"
+global diffYears = eval(val(str(NewYear)) + op + val(str(OldYear)))
+
+// section below for test purposes:
+//       displays readout of each step
+/**
+str("NewDate Array: ", NewDate) + HRET +
+str("OldDate Array: ", OldDate) + HRET +
+HRET + 
+str("size of NewDate Array: ", size(NewDate))+ HRET +
+str("size of OldDate Array: ", size(OldDate))+ HRET +
+HRET +
+str("Current year: " + str(NewYear))+ HRET +
+str("Old year: " + str(OldYear))+ HRET + 
+HRET +
+str("operator: ", op) + HRET +
+str("Size of diffYears: ", size(diffYears))+
+if diffYears > 10 then userok("Working!")"" else userok("comparison not working yet...")"" endif + HRET +
+str(OldYear," is ", diffYears, " years before ", NewYear)
+**/
+
+// additional month checking
+if ok(_chkMo) then 
+   local chkMo= if match(get(toupper(str(copy(_chkMo))),1),"Y") then
+      	      copy(_chkMo) else "" endif
+else ""
+endif
+
+global newDtMo,oldDtMo,diffMonths
+
+if chkMo<>"" then 
+	     if diffYears=="0"
+	     then 
+		 newDtMo=sub(NewDate,1,1)
+		 oldDtMo=sub(OldDate,1,1)
+		 diffMonths = eval(val(str(newDtMo)) + op + val(str(oldDtMo)))
+		 return diffMonths
+	     else
+		 newDtMo=sub(NewDate,1,1)
+		 oldDtMo=sub(OldDate,1,1)
+		 diffMonths = eval(val(str(newDtMo)) + op + val(str(oldDtMo)))
+		 frac=(diffMonths/12)
+		 return eval(diffYears+frac)
+	     endif
+else ""
+endif
+
+
+else ""
+endif
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_____________________________________________________________________________________________________________
+
+// working copy before 03.23.2018
+
+fn compare_Years(_OldDate,_NewDate){
+
+global OldDate = copy(_OldDate)
+if OldDate <> "" 
+then
+global NewDate = if ok(_NewDate) then copy(_NewDate) else str(._todaysdate) endif
+
+NewDate = getfield(NewDate, "/","")
+OldDate = getfield(OldDate, "/","")
+
+global NewYear = sub(NewDate,size(NewDate),1)
+global OldYear = sub(OldDate,size(OldDate),1)
+
+global op = "-"
+global diffYears = eval(val(str(NewYear)) + op + val(str(OldYear)))
+
+// section below for test purposes:
+//       displays readout of each step
+/**
+str("NewDate Array: ", NewDate) + HRET +
+str("OldDate Array: ", OldDate) + HRET +
+HRET + 
+str("size of NewDate Array: ", size(NewDate))+ HRET +
+str("size of OldDate Array: ", size(OldDate))+ HRET +
+HRET +
+str("Current year: " + str(NewYear))+ HRET +
+str("Old year: " + str(OldYear))+ HRET + 
+HRET +
+str("operator: ", op) + HRET +
+str("Size of diffYears: ", size(diffYears))+
+if diffYears > 10 then userok("Working!")"" else userok("comparison not working yet...")"" endif + HRET +
+str(OldYear," is ", diffYears, " years before ", NewYear)
+**/
+else ""
+endif
+}
+

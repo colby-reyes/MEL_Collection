@@ -1,0 +1,44 @@
+////////////////////////////////////////////////////
+//////////////////                //////////////////
+//////////////////  fn cccFlag()  //////////////////
+//////////////////  	          //////////////////
+////////////////////////////////////////////////////
+
+
+
+fn cccFlag(_message,_stat,_ccc){
+// fn sends flag containing specified message to listed users;
+//    subject of flag is set to pt's name
+// relies on MEL_SEND_FLAG()
+	// _message: full text (in "" ) of message to send in flag
+	// _stat: status to set flag to ("U"=urgent, "H"=high, "L"=low)
+	// _ccc: comma-delimited list of login names of users to send flag to 
+	//	 (e.g. "creyes,ykim,rherter")
+	// 	*if this var is blank, _ccc will default to CCC for document LOC
+
+local message = copy(_message)
+local loc = USER.CURLOCATIONNAME
+local stat = if ok(_stat) then copy(_stat) else "N" endif
+
+message = message + HRET + TIMESTAMP()
+
+local careCoord = if ok(_ccc) then copy(_ccc) else 
+COND
+CASE loc == "LCHC Archer Heights": careCoord = "kross"
+CASE loc == "LCHC Breakthrough": careCoord = "wahrenh"
+CASE loc == "LCHC Farragut": careCoord = "cvela"
+CASE loc == "LCHC Homan": careCoord = "edehmlo,bgarma"
+CASE loc == "LCHC Ogden - Main": careCoord = "rsmith,dadewal,marredon,swilson"
+CASE loc == "LCHC 3750 OB": careCoord = "nfermoso"
+CASE loc == "LCHC 3750 Peds": careCoord = "szhao"
+ENDCOND 
+endif
+
+MEL_SEND_FLAG("Flag", careCoord, str(stat), str(._TODAYSDATE), str(PATIENT.LASTNAME,", ",PATIENT.FIRSTNAME), str(message), "Documents",ADDDATES(str(._TODAYSDATE),"0","0","1"))
++ "Flag sent to CCC at " + str(loc)}
+
+
+
+//CCC login list: “rsmith,dadewal,wahrenh,marredon,swilson,szhao,nfermoso,bgarma,edehmlo,cvela,kross”
+
+

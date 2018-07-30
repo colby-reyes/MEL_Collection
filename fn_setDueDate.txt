@@ -1,0 +1,43 @@
+/////////////////////////////////////////////
+/////////////			/////////////
+/////////////  fn setDueDate()  /////////////
+/////////////			/////////////
+/////////////////////////////////////////////
+
+
+fn setDueDate(_dueObs,_t,_date){
+// fn sets due date for specified preventive service obs
+	// _dueObs = obs for due date of preventive service (e.g. "MAMMO DUE")
+	// _t = time interval in which service/test is due (visible below)
+	// _date = string of date to calculate due date from
+	//	   (e.g. "01/01/2018" or str(._TODAYSDATE))
+
+local dueObs, t, dateAdd
+
+dueObs = copy(_dueObs)
+t = copy(_t)
+date = copy(_date)
+
+COND
+CASE t == "1 month"  : dateAdd = ADDDATES(str(date),"0","1","0")
+CASE t == "2 months" : dateAdd = ADDDATES(str(date),"0","2","0")
+CASE t == "3 months" : dateAdd = ADDDATES(str(date),"0","3","0")
+CASE t == "3 months" : dateAdd = ADDDATES(str(date),"0","4","0")
+CASE t == "3 months" : dateAdd = ADDDATES(str(date),"0","5","0")
+CASE t == "6 months" : dateAdd = ADDDATES(str(date),"0","6","0")
+CASE t == "1 year"   : dateAdd = ADDDATES(str(date),"1","0","0")
+CASE t == "2 years"  : dateAdd = ADDDATES(str(date),"2","0","0")
+CASE t == "3 years"  : dateAdd = ADDDATES(str(date),"3","0","0")
+CASE t == "4 years"  : dateAdd = ADDDATES(str(date),"4","0","0")
+CASE t == "5 years"  : dateAdd = ADDDATES(str(date),"5","0","0")
+CASE t == "6 years"  : dateAdd = ADDDATES(str(date),"6","0","0")
+CASE t == "7 years"  : dateAdd = ADDDATES(str(date),"7","0","0")
+CASE t == "8 years"  : dateAdd = ADDDATES(str(date),"8","0","0")
+CASE t == "9 years"  : dateAdd = ADDDATES(str(date),"9","0","0")
+CASE t == "10 years" : dateAdd = ADDDATES(str(date),"10","0","0")
+CASE t == "20 years" : dateAdd = ADDDATES(str(date),"20","0","0")
+ENDCOND
+
+global setDueDate = OBSNOW(dueObs,dateAdd,str(._TODAYSDATE))
+return str(setDueDate)
+}

@@ -1,0 +1,53 @@
+|||||||||||||||||||||||||||||||||||||||||
+|||||||||||                   |||||||||||
+|||||||||||  fn newDueDate()  |||||||||||
+|||||||||||                   |||||||||||
+|||||||||||||||||||||||||||||||||||||||||
+
+
+
+
+
+fn newDueDate(_ObsTerm){
+// fn template to prompt replacement of Outdated due date 
+// ObsTerm should be input as a CPS obsterm in quotes (e.g. "MAMMO DUE")
+
+local ObsTerm
+ObsTerm=copy(_ObsTerm)
+if match(tolower(ObsTerm),"list_")>0 and match(tolower(ObsTerm),"_obs()")>0 then ObsTerm=eval(ObsTerm) endif
+
+IF obsany(ObsTerm)==""
+THEN "No Due Date set"
+ELSE 
+	IF (DURATIONDAYS(str(._TODAYSDATE), obsany(ObsTerm))<0 OR compare_Years(obsany(ObsTerm),str(._todaysdate),"Y")>0)
+	THEN obsany(ObsTerm) + "  NOTE: Due Date may be outdated. Update due-date in Control Panel"
+	ELSE obsany(ObsTerm)
+	ENDIF
+ENDIF
+}
+
+
+
+
+
+
+
+_________________________________________________________________________________________________________________
+// Working copy before 03.23.2018
+
+fn newDueDate(_ObsTerm){
+// Outdated due date fxn template
+// ObsTerm should be input as a CPS obsterm in quotes (e.g. "MAMMO DUE")
+local ObsTerm
+ObsTerm=copy(_ObsTerm)
+if match(tolower(ObsTerm),"list_")>0 and match(tolower(ObsTerm),"_obs()")>0 then ObsTerm=eval(ObsTerm) endif
+
+IF obsany(ObsTerm)==""
+THEN "No Due Date set"
+ELSE 
+	IF DURATIONDAYS(str(._TODAYSDATE), obsany(ObsTerm))<0
+	THEN obsany(ObsTerm) + "  NOTE: Due Date may be outdated. Update due-date in Control Panel"
+	ELSE obsany(ObsTerm)
+	ENDIF
+ENDIF
+}

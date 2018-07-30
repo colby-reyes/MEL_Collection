@@ -1,0 +1,11 @@
+//////////////////////////////
+/////////	     /////////
+/////////  fn hgb()  /////////
+/////////	     /////////
+//////////////////////////////
+.hgb
+
+fn hgb(){
+{ccc_extr_specific_ObsValDates("Last 3 HGB values: " + "\r\n","HGB","U","3","N","\r\n","","","","")}
+cfmt(template_obs(ccc_????_HGB_???(...)),"","Last 3 Hgb values: "+HRET,"","","")
+}

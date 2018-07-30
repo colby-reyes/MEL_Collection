@@ -1,0 +1,189 @@
+
+////////////////////////////////////////////////
+/////////////////	       /////////////////
+/////////////////  fn autoAdd  /////////////////
+/////////////////	       /////////////////
+////////////////////////////////////////////////
+
+
+/** COPY FN FROM VFE CRTEST-IHL **/
+
+
+fn orderAdd(){
+// fn uses orderOnce_test() to order In-house labs (1x only) when trigger obs is detected
+//	- also checks for required complementary obs if specified (e.g. "internal controls visualized" obs)
+// fn is inserted as a page-close handler (see "In-House Labs MA-Prov")
+
+local diagnosis = autoAddDx("E66^O99.21^E23^R73^E11^E10^O24")
+local dxCode = get(diagnosis,1)
+local dxDesc = get(diagnosis,2)
+
+orderOnce_test("S", "In House Labs", "Rapid Drug Screen (Urine Tox)", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-G0477","COCAINE UR","UTOX CTRL7")
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "UA dip stick - completed by MA", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-81000","UA COLOR")
+orderOnce_test("S", "In House Procedures", "Wet Mount/KOH", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-87210","WET MOUNT")
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin A1C - completed by MA", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-83036","HGBA1C")
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Blood Sugar - completed by MA", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-82947","BG FINGER")
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Hemoglobin - completed by MA", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-85018","HGB")
+orderOnce_test("S", "MA/Nursing Services - Completed Status", "Pregnancy Test - Urine - completed by MA", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-81025","HCG PREG UR","UCG INT CONT")
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-85610","PT PATIENT","PTINRCTRL")
+orderOnce_test("S", "In House Labs", "PT/INR - completed by LCHC ", "", str(dxCode), str(dxDesc), "", "", "", "", "","CPT-85610","INR","PTINRCTRL")
+orderOnce_test("S", "In House Labs", "Rapid Strep", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-87430","RAPID STREP")
+orderOnce_test("S", "In House Labs", "Rapid HIV (oral)", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-86703","HIVRAPIDRSLT")
+orderOnce_test("S", "In House Labs", "Rapid Influenza", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-87804","RAPIDFLUTST")
+orderOnce_test("S", "In House Labs", "PPD placement (v74.1)", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-86580","TB-PPD")
+orderOnce_test("S", "In House Labs", "iFOB (immunochemical fecal occult blood)", "", "Z00.00", "Adult Preventive Care", "", "", "", "", "","CPT-82274","IFOBT","IFOBCTRL")
+}
+
+
+
+
+
+
+// test to see if can display elements of array from fn
+
+fn array_test(){
+IF OBSANY("FLU VAX")<>""
+THEN
+global crTstAry = array(obsany("FLU VAX"),obsany("HEPBVAX#1"),obsany("HEPBVAX#2"))
+ELSE ""
+ENDIF
+}
+
+"E66^O99.21^E23^R73^E11^E10^O24"
+/** <---- Code to Test Separating Dx Code and Description ----> **/
+
+fn autoAddDx(_Dxs){
+local probList, probLine, parts, dxC, dxD, autoAddDx,probSz,Dxs,dxCtemp,dxDtemp
+
+Dxs = copy(_Dxs)
+probList = getfield(PROB_AFTER("list"),"\r","")
+//userok("Full problem list: "+HRET+str(probList))
+probSz = size(probList)
+//useroK("# problems in Problem List: "+str(probSz))
+
+for j=1, j<=probSz, j=j+1 do
+	//userok("iteration: "+str(j))
+	probLine = get(probList,j)
+	//userok("Checking problem: "+HRET+str(probLine))
+	
+	if matchany(probLine,Dxs)<>"" then
+		parts = getfield(probLine,"(",")")
+		//userok("variable <parts>: "+str(parts,","))
+		//userok("# elements in <parts>: "+str(size(parts)))
+		dxDtemp=get(parts,1)
+		dxD = str(dxD+"|"+sub(dxDtemp,2,size(dxDtemp)-1))
+		//userok(str("Dx description: "+dxD))
+		dxCtemp=get(parts,size(parts))
+		dxC = str(dxC+"|"+dxCtemp)
+		//userok(str("Dx code: "+dxC))
+		/**break**/
+	else probLine="" 
+	endif
+	
+endfor
+
+if dxC<>"" then "" else 
+	    userok("Patient age: "+str(patient_age()))
+	    COND
+	    CASE PATIENT_AGE()>=18
+		 dxC = "Z00.00"
+		 dxD = "Adult Preventive Care"
+	    CASE (PATIENT_AGE()<18 AND PATIENT_AGE()>=12)
+		 dxC = "Z00.3"
+		 dxD = "Adolescent Well Check"
+	    CASE PATIENT_AGE()<12
+		 dxC = "Z00.129"
+		 dxD = "Well Child Check"
+	    ENDCOND
+		//userok(str("Dx description: "+dxD+HRET+"Dx code: "+dxC))
+endif
+
+userok(str("Dx code(s): "+dxC+HRET+"Dx desc(s): "+dxD)) 
+autoAddDx = array(str(dxC),str(dxD))
+return autoAddDx
+
+}
+
+
+
+
+_____________________________________________________________________________________________________
+
+
+fn autoAddDx(_Dxs){
+local probList, probLine, parts, dxC, dxD, autoAddDx,probSz,Dxs
+
+Dxs = copy(_Dxs)
+probList = getfield(PROB_AFTER("list"),"\r","")
+//userok("Full problem list: "+HRET+str(probList))
+probSz = size(probList)
+//useroK("# problems in Problem List: "+str(probSz))
+
+for j=1, j<=probSz, j=j+1 do
+	//userok("iteration: "+str(j))
+	probLine = get(probList,j)
+	//userok("Checking problem: "+HRET+str(probLine))
+	
+	if matchany(probLine,Dxs)<>"" then
+		parts = getfield(probLine,"(",")")
+		//userok("variable <parts>: "+str(parts,","))
+		//userok("# elements in <parts>: "+str(size(parts)))
+		dxD = str(dxD+"|"+get(parts,1))
+		userok(str(sub(dxD,2,size(dxD)-1)))
+		//userok(str("Dx description: "+dxD))
+		dxC = str(dxD+"|"+get(parts,size(parts)))
+		//userok(str("Dx code: "+dxC))
+		/**break**/
+	else probLine="" 
+	endif
+	
+endfor
+
+if dxC<>"" then "" else 
+	    userok("Patient age: "+str(patient_age()))
+	    COND
+	    CASE PATIENT_AGE()>=18
+		 dxC = "Z00.00"
+		 dxD = "Adult Preventive Care"
+	    CASE (PATIENT_AGE()<18 AND PATIENT_AGE()>=12)
+		 dxC = "Z00.3"
+		 dxD = "Adolescent Well Check"
+	    CASE PATIENT_AGE()<12
+		 dxC = "Z00.129"
+		 dxD = "Well Child Check"
+	    ENDCOND
+		//userok(str("Dx description: "+dxD+HRET+"Dx code: "+dxC))
+endif
+
+userok(str("Dx code(s): "+dxC+HRET+"Dx desc(s): "+dxD)) 
+autoAddDx = array(str(dxC),str(dxD))
+return autoAddDx
+
+}
+
+
+
+
+______________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+/** <---- Diagnoses to associate w. orders ----> **/
+// DM
+E23^R73^E11^E10^O24
+
+// Obesity
+E66^O99.21
+
+// Preventive/Wellcheck
+Z00
+
+// otherwise
+Adult: Z00.00
+Adolescent: Z00.3
+Child/infant: Z00.129

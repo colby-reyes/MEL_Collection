@@ -1,0 +1,112 @@
+
+///////////////////////////////////////////////////
+////////////////  		   ////////////////  
+////////////////  PS Declinations  ////////////////  
+////////////////  		   ////////////////  
+///////////////////////////////////////////////////
+
+
+// each quicktext documents refusal of a specific preventive service measure (Title variable)
+//	records declination in flowsheet (1st obs) and ControlPanel (2nd obs)
+// each quicktext is a use case for fn declines()
+// see declines() fn file for details
+
+.fluno
+{declines("Flu vaccine","FLUVADECLN","CM FLU INTV")}
+
+.hepano
+{declines("Hep A vaccine","HEPADECL","CM HEPA INTV")}
+
+
+.hepbno
+{declines("Hep B vaccine","HEPBDECL","CM HEPB INTV")}
+
+
+.hpvno
+{declines("HPV vaccine","HPVDECLINE","CM HPV INTV")}
+
+
+.meningno
+{declines("Meningiococcal vaccine","MENINGDECLN","CM MGC INTV")}
+
+
+.mmrno
+{declines("MMR vaccine","MMRDECLN","CM MMR INTV")}
+
+
+.pneumovaxno
+{declines("Pneumovax vaccine","PNEUVAXDECLN","CM PNEU INTV")}
+
+
+.pneupedno
+{declines("Pneumococcal vaccine","PNEUPEDDECLN","CM PNEU INTV")}
+
+
+.prevnarno
+{declines("Adult Prevnar vaccine","PREVADDECLN","CM PNEU INTV")}
+
+
+.tdapno
+{declines("Tdap vaccine","TDTDAPREFUSD","CM TDAP INTV")}
+
+
+.tdno
+{declines("TD vaccine","TDTDAPREFUSD","CM TDAP INTV")}
+
+
+.varicellano
+{declines("Varicella vaccine","VARICELDECL","CM VAR INTV")}
+
+
+.zosterno
+{declines("Zoster vaccine","ZOSTREFUSED","CM ZOST INTV")}
+
+
+
+___________________________________________________________________________________________________
+
+
+.aceno
+{declines("ACE Inhibitor","NOTONACEINHB","CM AA INTV")}
+{declines("ACE Inhibitor","NOTONACEINHB","CM AANH INTV")""}
+
+
+.aspirinno
+{declines("Aspririn","ASACONTRAREF","CM ASA INTV")}
+
+
+.betano		
+{declines("Beta Blocker","BTABLCKREF","CM BBLK INTV")}
+
+
+.colonno	
+{declines("Colonoscopy","COLONRECACT","CM CRC INTV")}
+
+
+.dexano		
+{declines("DEXA","DEXA PT","CM OPSC INTV")}
+
+
+.hivno		
+{declines("HIV test","RFSD HIV TST","CM HIV INTV")}
+
+
+.mammono	
+{declines("Mammogram","MAMMRECACT","CM BR INTV")}
+
+
+.papno		
+{declines("Pap Smear","PAPRECACT","CM CERV INTV")}
+
+
+.spirono	
+{declines("Spirometry","SPIROEXCLUS","CM SPIR INTV")}
+
+
+.statinno	
+{declines("Statin","REF STATINS","CM STAT INTV")}
+
+
+.warfarinno	
+{declines("Warfarin","WARFARINREF","CM WARF INTV")}
+

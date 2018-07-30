@@ -1,0 +1,22 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||||||                 |||||||||||
+|||||||||||  fn  stdtest()  |||||||||||
+|||||||||||                 |||||||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+
+
+fn stdtest(){
+cfmt(template_obs("HIV AB"),"","HIV: ","","","") + 
+cfmt(template_obs("HIVRAPIDRSLT"),"","   //   HIV Rapid: ","","","")+ 
+cfmt(template_obs("RPR SCREEN"),"","   //   RPR: ","","","")+ 
+
+IF PATIENT.SEX == "F" THEN cfmt(template_obs("PAPINFECTION"),"","   //   Pap Inf: ","","","") ELSE "" ENDIF + HRET +
+
+cfmt(template_obs("GONO AMPL"),"","GC: ","","","")+ 
+cfmt(template_obs("CHLAMYD AMPL"),"","   //   Chlam: ","","","")+ 
+cfmt(template_obs("TRICH"),"","   //   TRICH: ","","","")+
+cfmt(template_obs("GCCLT-RECTAL"),"","   //   Rectal culture:  ","","","")
+}

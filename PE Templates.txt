@@ -1,0 +1,159 @@
+////////////////////////////////
+///////////  	     ///////////
+///////////  URI PE  ///////////
+///////////  	     ///////////
+////////////////////////////////
+
+//.uripe
+
+fn uripe(){
+//General:  Well developed, well nourished, in no acute distress.
+DOCUMENT.TEMP_CCC_PE_MLEF_GEN="Well developed, well nourished, in no acute distress." ""
+//Head:  Normocephalic and atraumatic.
+DOCUMENT.TEMP_CCC_PE_MLEF_HEAD="Normocephalic and atraumatic." ""
+//Eyes:  PERRL/EOM intact, conjunctiva and sclera clear.
+DOCUMENT.TEMP_CCC_PE_MLEF_EYES="PERRL/EOM intact, conjunctiva and sclera clear." ""
+//Ears:  TM's intact and clear with normal canals with grossly normal hearing.
+DOCUMENT.TEMP_CCC_PE_MLEF_EARS="TM's intact and clear with normal canals with grossly normal hearing." ""
+//Nose:  Boggy,.clear nasal discharge.  
+DOCUMENT.TEMP_CCC_PE_MLEF_NOSE="Boggy,. clear nasal discharge." ""
+//Mouth:  Throat injected.
+DOCUMENT.TEMP_CCC_PE_MLEF_MOUTH="Throat injected." ""
+//Neck:  No lymphadenopathy.
+DOCUMENT.TEMP_CCC_PE_MLEF_NECK="No lymphadenopathy." ""
+//Lungs:  Clear bilaterally to auscultation, normal respiratory effort.
+DOCUMENT.TEMP_CCC_PE_MLEF_LUNGS="Clear bilaterally to auscultation, normal respiratory effort." ""
+//Heart:  NL S1 S2, reg rate, no murmurs, rubs or gallops.
+DOCUMENT.TEMP_CCC_PE_MLEF_HEART="NL S1 S2, reg rate, no murmurs, rubs or gallops." ""
+}
+ 
+///////////// END //////////////
+
+
+
+
+
+////////////////////////////////
+///////////  	     ///////////
+///////////  DM F/U  ///////////
+///////////  	     ///////////
+////////////////////////////////
+
+//.dmfpe
+
+fn dmpe(){
+//General:  Well developed, well nourished, in no acute distress. 
+DOCUMENT.TEMP_CCC_PE_MLEF_GEN="Well developed, well nourished, in no acute distress." ""
+//Lungs:  Clear bilaterally to auscultation, normal respiratory effort.  
+DOCUMENT.TEMP_CCC_PE_MLEF_LUNGS="Clear bilaterally to auscultation, normal respiratory effort." ""
+//Heart:  Regular rate and rhythm, normal S1, S2 without murmurs, rubs, gallops  
+DOCUMENT.TEMP_CCC_PE_MLEF_HEART="Regular rate and rhythm, normal S1, S2 without murmurs, rubs or gallops." ""
+//Extremities:  no lower extremity edema
+DOCUMENT.TEMP_CCC_PE_MLEF_EXT="No lower extremity edema" ""
+//Psych:  Alert and cooperative; normal mood and affect; normal attention span and concentration; normal cognition.
+DOCUMENT.TEMP_CCC_PE_MLEF_PSYCH="Alert and cooperative; normal mood and affect; normal attention span and concentration; normal cognition." ""
+}
+
+///////////// END //////////////
+
+
+
+
+
+
+
+
+///////////////////////////////////////////
+///////////  	         	///////////
+///////////  NORMAL GENERAL PE  ///////////
+///////////  	         	///////////
+///////////////////////////////////////////
+
+//.gpe
+
+fn gpe(){
+//General:  Well developed, well nourished, in no acute distress. 
+DOCUMENT.TEMP_CCC_PE_MLEF_GEN="Well developed, well nourished, in no acute distress." ""
+//Head:  Normocephalic and atraumatic.
+DOCUMENT.TEMP_CCC_PE_MLEF_HEAD="Normocephalic and atraumatic." ""
+//Eyes:  PERRL/EOM intact, conjunctiva and sclera clear without nystagmus.  
+DOCUMENT.TEMP_CCC_PE_MLEF_EYES="PERRL/EOM intact, conjunctiva and sclera clear without nystagmus." ""
+//Nose:  No deformity, discharge, inflammation, or lesions.
+DOCUMENT.TEMP_CCC_PE_MLEF_NOSE="No deformity, discharge, inflammation, or lesions." ""
+//Ears:  TM's intact and clear with normal canals with grossly normal hearing.
+DOCUMENT.TEMP_CCC_PE_MLEF_EARS="TM's intact and clear with normal canals with grossly normal hearing." ""
+//Mouth:  Oropharynx clear, moist mucous membranes. No deformity or lesions.
+DOCUMENT.TEMP_CCC_PE_MLEF_MOUTH="Oropharynx clear, moist mucous membranes. No deformity or lesions." ""
+//Neck:  No masses, thyromegaly or lymphadenopathy.
+DOCUMENT.TEMP_CCC_PE_MLEF_NECK="No masses, thyromegaly or lymphadenopathy." ""
+//Lungs:  Clear bilaterally to auscultation, normal respiratory effort.
+DOCUMENT.TEMP_CCC_PE_MLEF_LUNGS="Clear bilaterally to auscultation, normal respiratory effort." ""
+//Heart:  Regular rate and rhythm, normal S1, S2 without murmurs, rubs or gallops
+DOCUMENT.TEMP_CCC_PE_MLEF_HEART="Regular rate and rhythm, normal S1, S2 without murmurs, rubs or gallops." ""
+//Abdomen:  Soft, non-tender, non-distended, positive bowel sounds. No hepatosplenomegaly or masses. No ventral or umbilical hernias noted.
+DOCUMENT.TEMP_CCC_PE_MLEF_ABDOMEN="Soft, non-tender, non-distended, positive bowel sounds. No hepatosplenomegaly or masses. No ventral or umbilical hernias noted." ""
+//Extremities:  No edema, or deformity noted. 
+DOCUMENT.TEMP_CCC_PE_MLEF_EXT="No edema, or deformity noted." ""
+//Neurologic:  alert and oriented x3 with no focal deficits and normal gait.  
+DOCUMENT.TEMP_CCC_PE_MLEF_NEURO="Alert and oriented x3, no focal deficits and normal gait." ""
+//Skin:  Warm and dry, no rashes or lesions.
+DOCUMENT.TEMP_CCC_PE_MLEF_SKIN="Warm and dry, no rashes or lesions." ""
+//Psych:  Alert and cooperative; normal mood and affect; normal attention span and concentration; normal cognition.
+DOCUMENT.TEMP_CCC_PE_MLEF_PSYCH="Alert and cooperative; normal mood and affect; normal attention span and concentration; normal cognition." ""
+}
+
+////////////////// END ///////////////////
+
+
+
+
+
+////////////////////////////////////
+///////////  	         ///////////
+///////////  NORMAL F/U  ///////////
+///////////  	         ///////////
+////////////////////////////////////
+
+//.nfupe
+ 
+fn normfupe(){
+//General:  Well developed, well nourished, in no acute distress. 
+DOCUMENT.TEMP_CCC_PE_MLEF_GEN="Well developed, well nourished, in no acute distress." ""
+//Lungs:  Clear bilaterally to auscultation, normal respiratory effort.
+DOCUMENT.TEMP_CCC_PE_MLEF_LUNGS="Clear bilaterally to auscultation, normal respiratory effort." ""
+//Heart:  Regular rate and rhythm, normal S1, S2 without murmurs, rubs, gallops, or clicks
+DOCUMENT.TEMP_CCC_PE_MLEF_HEART="Regular rate and rhythm, normal S1, S2 without murmurs, rubs, gallops, or clicks." ""
+} 
+/////////////// END ////////////////
+
+
+
+
+
+
+/////////////////////////////////////
+///////////  	          ///////////
+///////////  Typical UTI  ///////////
+///////////  	          ///////////
+/////////////////////////////////////
+
+//.utipe
+
+fn utipe(){
+//General:  Well developed, well nourished, in no acute distress. 
+DOCUMENT.TEMP_CCC_PE_MLEF_GEN="Well developed, well nourished, in no acute distress." ""
+//Lungs:  Clear bilaterally to auscultation, normal respiratory effort.
+DOCUMENT.TEMP_CCC_PE_MLEF_LUNGS="Clear bilaterally to auscultation, normal respiratory effort." ""
+//Heart:  Regular rate and rhythm, normal S1, S2 without murmurs, rubs, gallops, or clicks
+DOCUMENT.TEMP_CCC_PE_MLEF_HEART="Regular rate and rhythm, normal S1, S2 without murmurs, rubs, gallops, or clicks." ""
+}
+//////////////// END ////////////////
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||				|||||||
+|||||||   fn  obsUpdate()	|||||||
+|||||||				|||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+fn obsUpdate(_ObsTerm,_panelTerm){
+// fn compares date of independent obs to panel obs and returns most recent date to display
+// _ObsTerm = CPS observation term for any single test that is part of a panel and should be entered in quotes (e.g. "HDL")
+// _panelTerm = string of obs term specific to panel containing _ObsTerm (e.g. "CHOLESTEROL")
+// Panel Reference info: 
+// NA:  ()  K:  (x)  CL:  ()  CO2:  ()
+// AnGp:  ()  CA:  (x)  Glu:  (x)
+// BUN:  (x)  Creat: 12 (x)  GFR:  ()
+// ______________________________________
+//
+// Tot.Bili:  (x)   Bili Dir.:  (x)   AST:  (x)
+// Alk Phos:  (x)   Alb:  (x)   Prot:  (x)  ALT:  (x)   
+// _______________________________________
+//
+// Chol:  120 (12/15/2017)   //    LDL:  x   //    HDL: x   //   TG: x   //   10-Year ASCVD Risk: x   //   ALT:  x   //    AST: x  (11/2017)
+// _______________________________________
+// 
+// WBC:  ()   HGB: 12.0 (x)   MCV:  ()   Platelets:  (x)
+// _______________________________________
+// x = can order independently
+// 
+
+local obs,panel
+
+obs = copy(_ObsTerm)
+panel = copy(_panelTerm)
+
+IF match(lastobsdate(panel),lastobsdate(obs)) 
+THEN ""
+ELSE CFMT(LASTOBSDATE(obs),""," (","",") ")
+ENDIF
+
+// Example Call:
+// obsUpdate("HGB","WBC")
+// returns "*HGB date*" if it is more recent than the panel;
+// returns "" if HGB was last ordered as part of CBC panel
+// (in the above case, HGB is part of the CBC panel but can be ordered as an independent test
+// but WBC can only be ordered as part of the CBC panel.)
+}

@@ -1,0 +1,20 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||||||                 |||||||||||
+|||||||||||   fn dmtest()   |||||||||||
+|||||||||||                 |||||||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+fn dmtest(){
+
+"Blood glucose: "+cfmt(LASTOBSVALUE("BG FINGER"),"","",""," ("+LASTOBSDATE("BG FINGER")+")   //   ","")+"Last 3 A1C values: "+ccc_extr_specific_ObsValDates("","HGBA1C","U","3","N",", ","","","","")+HRET+
+
+"BP Today: "+ccc_r_a_o_a(List_BP_systolic_obs())+"/"+ccc_r_a_o_a(List_BP_diastolic_obs())+"   //   Creatinine: "+cfmt(template_obs("CREATININE"),"","","","","")+"   //   Microalbumin ratio: "+cfmt(template_obs("MALBCR RATIO"),"","","","","") +HRET+
+
+"LDL: "+cfmt(template_obs("LDL"),"","","","","")+ cardio_risk()+
+
+"Last eye exam: "+ cfmt(template_obsDate("DIAB EYE EX"),"","","","","")+"   //   Last foot exam: "+cfmt(template_obsDate("DIAB FOOT CK"),"","","","","")+HRET+
+
+vax_hist("FLU VAX","FLUVAXDECLN","Flu") +"   //   "+ vax_hist("PNEUMOVAX","PNEUVAXDECL","Pneumovax") + "   //   " + vax_hist("PCV13#1","PREVADDECLN","PCV13")
+}

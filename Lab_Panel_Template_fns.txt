@@ -1,0 +1,74 @@
+|||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||                       |||||||||||
+|||||||||||  Lab Panel Templates  |||||||||||
+|||||||||||                       |||||||||||
+|||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+
+NA:  ()  K:  (x)  CL:  ()  CO2:  ()
+AnGp:  ()  CA:  (x)  Glu:  (x)
+BUN:  (x)  Creat: 12 (x)  GFR:  ()
+
+fn bmptemp(){
+cfmt(template_obs("NA"),"","NA: ","","","") + 
+cfmt(template_obs("K SERUM"),"","   //   K: ","",obsUpdate("K SERUM","NA"),"") +
+cfmt(template_obs("CL SERUM"),"","   //   CL: ","","","") +
+cfmt(template_obs("CO2"),"","   //   CO2: ","","","") + HRET +
+cfmt(template_obs("ANION GAP"),"","AnGp: ","","","") + 
+cfmt(template_obs("CALCIUM"),"","   //   CA: ","",obsUpdate("CALCIUM","NA"),"")  + 
+cfmt(template_obs("GLUCOSE SER"),"","   //   Glu: ","",obsUpdate("GLUCOSE SER","NA"),"") + HRET +
+cfmt(template_obs("BUN"),"","BUN: ","",obsUpdate("BUN","NA"),"") + 
+cfmt(template_obs("CREATININE"),"","   //   Creat: ","",obsUpdate("CREATININE","NA"),"") + 
+cfmt(template_obs("GFR"),"","   //   GFR: ",""," [MDRD-calc]","") +
+cfmt(LASTOBSDATE("NA"),"","   Panel date:  (","",")","")  
+}
+
+______________________________________
+
+Tot.Bili:  (x)   Bili Dir.:  (x)   AST:  (x)
+Alk Phos:  (x)   Alb:  (x)   Prot:  (x)  ALT:  (x)   
+
+fn lfttemp(){
+cfmt(template_obs("BILI TOTAL"),"","Tot Bili: ","",obsUpdate("BILI TOTAL","BILI DIRECT"),"") +
+cfmt(template_obs("BILI DIRECT"),"","   //   Bili Dir: ","",obsUpdate("BILI DIRECT","BILI TOTAL"),"") +
+cfmt(template_obs("SGOT (AST)"),"","   //   AST: ","",obsUpdate("SGOT (AST)","BILI TOTAL"),"") +
+cfmt(template_obs("ALK PHOS"),"","   //   Alk Phos: ","",obsUpdate("ALK PHOS","BILI TOTAL"),"") + HRET +
+cfmt(template_obs("ALBUMIN"),"","Alb: ","",obsUpdate("ALBUMIN","BILI TOTAL"),"") +
+cfmt(template_obs("PROTEIN, TOT"),"","   //   Prot: ","",obsUpdate("PROTEIN, TOT","BILI TOTAL"),"") +
+cfmt(template_obs("SGPT (ALT)"),"","   //   ALT: ","",obsUpdate("SGPT (ALT)","BILI TOTAL"),"") +
+cfmt(LASTOBSDATE("BILI TOTAL"),"","   Panel date: (","",")","")
+}
+
+_______________________________________
+
+Chol:  120 (12/15/2017)   //    LDL:  x   //    HDL: x   //   TG: x   //   10-Year ASCVD Risk: x   //   ALT:  x   //    AST: x  (11/2017)
+
+fn lipidtemp(){
+cfmt(template_obs("CHOLESTEROL"),"","Chol: ","",obsUpdate("CHOLESTEROL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("LDL"),"","LDL: ","",obsUpdate("LDL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("HDL"),"","HDL: ","",obsUpdate("HDL","TRIGLYCERIDE") + "   //   ","") +
+cfmt(template_obs("TRIGLYCERIDE"),"","TG: ","",obsUpdate("TRIGLYCERIDE","HDL") + "   //   ","") +  
+cfmt(LASTOBSDATE("TRIGLYCERIDE"),"","   Panel date: (","",")","") + HRET +
+cardio_risk() +
+cfmt(template_obs("SGPT (ALT)"),"","ALT: ","",obsUpdate("SGPT (ALT)","SGOT (AST)") + "   //   ","") +
+cfmt(template_obs("SGOT (AST)"),"","AST: ","",obsUpdate("SGOT (AST)","SGOT (AST)") + "   //   ","") + 
+cfmt(LASTOBSDATE("SGOT (AST)"),"","   Panel date: (","",")","")
+}
+
+
+_______________________________________
+
+WBC:  ()   HGB: 12.0 (x)   MCV:  ()   Platelets:  (x)
+
+fn cbctemp(){
+cfmt(template_obs("WBC"),"","WBC: ","","","") +
+cfmt(template_obs("HGB"),"","   //   HGB: ","",obsUpdate("HGB","WBC"),"") +
+cfmt(template_obs("MCV"),"","   //   MCV: ","","","") +
+cfmt(template_obs("PLATELETS"),"","   //   Platelets: ","",obsUpdate("PLATELETS","WBC"),"") +
+cfmt(LASTOBSDATE("WBC"),"","   Panel date: (","",")","")
+}
+
+_______________________________________
+x = can order independently

@@ -1,0 +1,156 @@
+|||||||||||||||||||||||||||||||||||||||
+|||||||				|||||||
+|||||||   fn  template_obs()	|||||||
+|||||||				|||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+fn template_obs(_obs,_upDate){
+// fn returns formatted string of value with date for most recent obs in _obs
+// _obs = carat delimited set of obsterms
+// _upDate = optional. if obs in _obs should be checked against a panel date, _upDate
+//	     should be set to obs of panel (see _panelObs in obsUpdate())
+//	     if arg is empty or "N" panel date(s) will not be checked for
+
+
+local obs, upDate
+obs = copy(_obs)
+
+if ok(_upDate) then upDate = copy(_upDate) else upDate = "N" endif
+
+obs = most_recent_obs(obs)
+
+if obsany(obs)==""
+then "??"
+else obsany(obs) + if upDate=="N" then cfmt(lastobsdate(obs),""," (","",")","") else "" endif
+endif
+}
+
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||
+|||||||				|||||||
+|||||||   fn  template_obs()	|||||||
+|||||||				|||||||
+|||||||||||||||||||||||||||||||||||||||
+
+
+
+// test version
+
+fn template_obsTest(_obs,_upDate,_panel,_obsName,_titleLine,_ageLower,_ageUpper,_gender){
+
+/////////////////////////////////////////
+////////			/////////
+////////  START: NOTES TO SELF  /////////
+////////			/////////
+/////////////////////////////////////////
+/**
+
+- figure out sub(var,?,?) vs. getfield(obs_str,"symbol","")
+	- want to make ^-delimited array from obs and obsName
+	- then want to check each item in that array for " | " delimiter 
+	  to separate into interchangeable obs/titles
+
+- make a title format that helps with readability
+	- e.g /<----- Lipid Panel ----->/
+
+- example use:
+	- template_obs("HGBA1C|GLUCOSE|BG FINGER") >> returns formatted results for most recent a1c/gluc value
+	- template_obs("LDL^HDL^CHOLESTEROL^
+
+
+**/
+/////////////////////////////////////////
+////////			/////////
+////////   END: NOTES TO SELF   /////////
+////////			/////////
+/////////////////////////////////////////
+
+
+
+// _obs is a carat- and pipe-delimited set of obsterms
+//   (carat for different obs categories, pipe for interchangeable obs >> e.g. "GLUCOSE|BG FINGER^LDL^HDL")
+// _obsName is a carat- and pipe-delimited list of names/titles corresponding to the obs terms listed in _obs
+//   (e.g. "Glucose (serum)|Glucose^low density lipoprotein^high density lipoprotein")
+// _titleLine is a carate-delimited list of titles for a section
+//   (e.g. ""^""^""^"Lipid Panel"^""^"" will put the title "Lipid Panel" on its own line before the 4th obs 
+// _ageLower denotes lower bounds of age range (e.g. for >40yo _ageLower = "40")
+// _ageUpper denotes upper bounds of age range (e.g. for <80yo _ageUpper = "80")
+// _gender is str(PATIENT.SEX) or "M" or "F"
+// _upDate is "Y" or "N" (default "N" if ok(_upDate)=False) >> runs obsUpdate(obs[i],_panel)
+// _panel gives the panel-specific obs of the panel of obs called in _obs to compare date against
+
+
+if ok(_obs)=FALSE or ok(_obsName) then
+userok("Too few arguments")
+return ""
+else 
+
+local ageL,ageU,gmf,lreturn
+
+
+if ok(_ageLower) then
+	ageL=copy(_ageLower)
+	if PATIENT_AGE()>ageL then "" else lreturn = "" endif
+else "" endif
+
+if ok(_ageUpper) then
+	ageU=copy(_ageUpper)
+	if PATIENT_AGE()<ageU then "" else lreturn = "" endif
+else "" endif
+
+if ok(_gender) then
+	g = copy(_gender)
+	gmf=sub(g,1,1)
+	s = PATIENT.SEX
+	sex = sub(s,1,1)
+	if sex==gmf then "" else lreturn = "" endif
+else "" endif
+endif
+
+if lreturn<>"" then
+
+local obs, upDate
+obs = copy(_obs)
+
+if ok(_upDate) then upDate = copy(_upDate) else upDate = "N" endif
+
+obs = most_recent_obs(obs)
+
+if obsany(obs)==""
+then lreturn = "??"
+else lreturn = lastobsvalue(obs) + if upDate=="N" then cfmt(lastobsdate(obs),""," (","",")","") else "" endif
+endif
+
+else lreturn=""
+endif
+return lreturn
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+fn currentYear(){
+global todayArray = getfield(str(._todaysdate),"/","")
+return size(todayArray)
+return str(get(todayArray,1))
+}
